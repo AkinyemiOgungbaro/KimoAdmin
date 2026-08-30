@@ -12,6 +12,7 @@ import '../../shared/widgets/range_dropdown.dart';
 import '../../shared/widgets/paginator.dart';
 import '../../shared/widgets/stat_card.dart';
 import '../../theme/app_theme.dart';
+import '../../core/web_download.dart';
 import 'data/game_models.dart';
 
 class GameDetailPage extends StatefulWidget {
@@ -791,12 +792,36 @@ class _TriviaPanelState extends State<_TriviaPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Import questions',
-              style: GoogleFonts.inter(
-                  fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
-          const SizedBox(height: 4),
-          Text('Upload a CSV of questions for a category.',
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Import questions',
+                        style: GoogleFonts.inter(
+                            fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    const SizedBox(height: 4),
+                    Text('Upload a CSV of questions for a category.',
+                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                  ],
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () {
+                  downloadText(_triviaTemplateCsv, 'trivia_template.csv');
+                },
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: Text('Download Template', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 16),
           InkWell(
             onTap: _importing ? null : _pick,
@@ -1231,3 +1256,55 @@ class _DashedBorderPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+const String _triviaTemplateCsv = '''prompt,option_1,option_2,option_3,option_4,answer
+Who was Nigeria's first President?,Nnamdi Azikiwe,Tafawa Balewa,Yakubu Gowon,Shehu Shagari,1
+In what year did Nigeria become a republic?,1960,1963,1966,1979,2
+Which colonial power ruled Nigeria before independence?,France,Portugal,Britain,Germany,3
+Who amalgamated the Northern and Southern Protectorates in 1914?,Frederick Lugard,Hugh Clifford,Arthur Richards,John Macpherson,1
+Which country lies directly to the west of Nigeria?,Cameroon,Niger,Benin,Chad,3
+In what year did the Nigerian Civil War end?,1967,1968,1970,1972,3
+Who was Nigeria's first military Head of State?,Yakubu Gowon,Aguiyi-Ironsi,Murtala Muhammed,Olusegun Obasanjo,2
+In what year did Nigeria return to civilian rule after military government?,1993,1996,1999,2003,3
+What is Nigeria's legislature called?,The Senate,The National Assembly,The House of Chiefs,The Federal Council,2
+How many senators sit in the Nigerian Senate?,90,109,120,360,2
+How many members sit in the House of Representatives?,109,240,360,469,3
+Which body conducts elections in Nigeria?,NNPC,INEC,EFCC,NAFDAC,2
+What does EFCC stand for?,Economic and Financial Crimes Commission,Electoral and Federal Crime Council,Energy and Finance Control Commission,Economic Federal Currency Council,1
+Which agency regulates food and drugs in Nigeria?,NAFDAC,SON,NCC,FIRS,1
+What is the name of Nigeria's central bank?,Bank of Nigeria,Central Bank of Nigeria,Federal Reserve of Nigeria,National Bank of Nigeria,2
+How many local government areas does Nigeria have?,660,700,774,800,3
+Which state is Nigeria's largest by land area?,Borno,Niger,Taraba,Yobe,2
+Which Nigerian state is known as the Food Basket of the Nation?,Kano,Benue,Kaduna,Ogun,2
+Which Nigerian state is known as the Sunshine State?,Ondo,Ekiti,Osun,Oyo,1
+Which Nigerian city is known as the Coal City?,Jos,Enugu,Aba,Onitsha,2
+Which Nigerian city is known as the Garden City?,Enugu,Port Harcourt,Calabar,Jos,2
+Zuma Rock is located in which state?,Niger,Kogi,Nasarawa,Plateau,1
+Olumo Rock is located in which state?,Osun,Ogun,Oyo,Ekiti,2
+Yankari Game Reserve is located in which state?,Bauchi,Gombe,Taraba,Adamawa,1
+Which Nigerian city is famous for its ancient bronze sculptures?,Ife,Benin City,Nsukka,Katsina,2
+The Osun-Osogbo festival is held in which state?,Oyo,Osun,Ogun,Kwara,2
+Which Nigerian city is home to the ancient city walls and the Emir's Palace?,Katsina,Kano,Zaria,Sokoto,2
+The Third Mainland Bridge is located in which city?,Abuja,Lagos,Port Harcourt,Warri,2
+Nnamdi Azikiwe International Airport serves which city?,Enugu,Abuja,Onitsha,Awka,2
+Which mineral resource is Nigeria best known for exporting?,Gold,Crude oil,Diamonds,Copper,2
+In which present-day state was crude oil first discovered in Nigeria?,Rivers,Bayelsa,Delta,Akwa Ibom,2
+Which Nigerian state is known as the Land of Aquatic Splendour?,Rivers,Bayelsa,Cross River,Delta,2
+On what date is Nigeria's Independence Day celebrated?,1 May,1 October,12 June,29 May,2
+What colour is the middle band of the Nigerian flag?,Green,White,Yellow,Blue,2
+Who designed the Nigerian flag?,Taiwo Akinkunmi,Herbert Macaulay,Anthony Enahoro,Ernest Ikoli,1
+Which currency note carries the image of Nnamdi Azikiwe?,100 naira,200 naira,500 naira,1000 naira,3
+How long is the NYSC service year?,Six months,One year,Eighteen months,Two years,2
+What is the name of Nigeria's national football team?,Black Stars,Super Eagles,Indomitable Lions,Elephants,2
+In what year did Nigeria first win the Africa Cup of Nations?,1976,1980,1994,2013,2
+In what year did Nigeria win Olympic gold in football?,1992,1996,2000,2008,2
+Which Nigerian won an Olympic gold medal in the long jump in 1996?,Chioma Ajunwa,Falilat Ogunkoya,Mary Onyali,Blessing Okagbare,1
+Who wrote the novel Things Fall Apart?,Wole Soyinka,Chinua Achebe,Ben Okri,Buchi Emecheta,2
+Which Nigerian musician released the album Made in Lagos?,Burna Boy,Wizkid,Davido,Olamide,2
+Which Nigerian artist won a Grammy for the album Twice as Tall?,Wizkid,Burna Boy,Tiwa Savage,Femi Kuti,2
+Which Nigerian city hosted the FESTAC festival in 1977?,Abuja,Lagos,Kaduna,Ibadan,2
+Which is the oldest university in Nigeria?,University of Lagos,University of Ibadan,Ahmadu Bello University,University of Nigeria Nsukka,2
+Which Nigerian served as Secretary-General of the Commonwealth?,Emeka Anyaoku,Nnamdi Azikiwe,Yakubu Gowon,Olusegun Obasanjo,1
+Which Nigerian became Secretary-General of OPEC in 2016?,Ngozi Okonjo-Iweala,Mohammed Barkindo,Emmanuel Kachikwu,Diezani Alison-Madueke,2
+Who became Director-General of the World Trade Organization in 2021?,Amina Mohammed,Ngozi Okonjo-Iweala,Obiageli Ezekwesili,Arunma Oteh,2
+Nigeria joined the United Nations in 1960.,True,False,,,1''';
