@@ -266,9 +266,11 @@ class _LiveFeedCard extends StatelessWidget {
 
   String _amountLabel(ActivityEntry a) {
     final c = a.currency.toLowerCase();
-    if (c == 'coins' || c == 'coin') return '+${Format.compact(a.amount)}';
+    if (c == 'coins' || c == 'coin') {
+      return a.amount > 0 ? '+${Format.compact(a.amount)}' : Format.compact(a.amount);
+    }
     if (c == 'ngn' || c == 'naira' || c == 'kobo') return Format.naira(a.amount);
-    return '${Format.compact(a.amount)} ${a.currency}'.trim();
+    return '${a.amount > 0 ? '+' : ''}${Format.compact(a.amount)} ${a.currency}'.trim();
   }
 
   @override

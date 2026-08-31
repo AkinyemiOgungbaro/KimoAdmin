@@ -91,41 +91,73 @@ class RewardsPageData {
 /// Multipart payload for creating/updating a reward. [imageBytes] is optional
 /// on edit (omit to keep the existing image).
 class RewardForm {
-  final String name;
-  final String description;
+  final String? name;
+  final String? description;
   final String type;
   final String category;
   final String? subcategory;
-  final num priceKobo;
+  final String? network;
+  final String? variationCode;
+  final num? priceKobo;
   final num coinCost;
-  final num cashCostKobo;
-  final num stock;
+  final num? cashCostKobo;
+  final num? discountPercent;
+  final num? stock;
   final List<int>? imageBytes;
   final String? imageFilename;
 
   const RewardForm({
-    required this.name,
-    required this.description,
+    this.name,
+    this.description,
     required this.type,
     required this.category,
     this.subcategory,
-    required this.priceKobo,
+    this.network,
+    this.variationCode,
+    this.priceKobo,
     required this.coinCost,
-    required this.cashCostKobo,
-    required this.stock,
+    this.cashCostKobo,
+    this.discountPercent,
+    this.stock,
     this.imageBytes,
     this.imageFilename,
   });
 
-  Map<String, dynamic> toFields() => {
-        'name': name,
-        if (description.isNotEmpty) 'description': description,
-        'type': type,
-        'category': category,
-        if (subcategory != null && subcategory!.isNotEmpty) 'subcategory': subcategory,
-        'price_kobo': priceKobo,
-        'coin_cost': coinCost,
-        'cash_cost_kobo': cashCostKobo,
-        'stock': stock,
-      };
+  Map<String, dynamic> toFields() {
+    final map = <String, dynamic>{
+      'type': type,
+      'category': category,
+      'coin_cost': coinCost,
+    };
+    if (name != null) map['name'] = name;
+    if (description != null && description!.isNotEmpty) map['description'] = description;
+    if (subcategory != null && subcategory!.isNotEmpty) map['subcategory'] = subcategory;
+    if (network != null && network!.isNotEmpty) map['network'] = network;
+    if (variationCode != null && variationCode!.isNotEmpty) map['variation_code'] = variationCode;
+    if (priceKobo != null) map['price_kobo'] = priceKobo;
+    if (cashCostKobo != null) map['cash_cost_kobo'] = cashCostKobo;
+    if (discountPercent != null) map['discount_percent'] = discountPercent;
+    if (stock != null) map['stock'] = stock;
+    return map;
+  }
+}
+
+class DataPlan {
+  final String variationCode;
+  final String name;
+  final int amountKobo;
+
+  const DataPlan({
+    required this.variationCode,
+    required this.name,
+    required this.amountKobo,
+  });
+
+  factory DataPlan.fromJson(Map<String, dynamic> json) {
+    return DataPlan(
+      variationCode: json['variation_code'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      amountKobo: (json['amount_kobo'] as num?)?.toInt() ?? 0,
+    );
+  }
 }

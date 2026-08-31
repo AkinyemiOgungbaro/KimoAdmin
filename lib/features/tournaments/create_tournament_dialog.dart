@@ -98,8 +98,9 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     final duration = int.tryParse(_duration.text.trim());
     if (duration == null || duration <= 0) return _fail('Enter a valid duration (minutes)');
 
-    final limit = int.tryParse(_limit.text.trim());
-    if (limit == null || limit <= 0) return _fail('Enter a valid participant limit');
+    final limitText = _limit.text.trim();
+    final limit = limitText.isEmpty ? 0 : int.tryParse(limitText);
+    if (limit == null || limit < 0) return _fail('Enter a valid participant limit');
 
     final poolNaira = num.tryParse(_pool.text.trim());
     if (poolNaira == null || poolNaira < 0) return _fail('Enter a valid prize pool');
@@ -111,7 +112,6 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     if (attempts == null || attempts <= 0) return _fail('Enter valid attempts per game');
 
     final code = _code.text.trim();
-    if (code.isEmpty) return _fail('Generate or enter an entry code');
 
     final form = TournamentForm(
       name: name,

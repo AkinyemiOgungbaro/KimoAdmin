@@ -187,7 +187,7 @@ class TournamentForm {
   final num prizePoolKobo;
   final num attemptsPerGame;
   final num participantLimit;
-  final String entryCode;
+  final String? entryCode;
 
   const TournamentForm({
     required this.name,
@@ -197,7 +197,7 @@ class TournamentForm {
     required this.prizePoolKobo,
     required this.attemptsPerGame,
     required this.participantLimit,
-    required this.entryCode,
+    this.entryCode,
   });
 
   Map<String, dynamic> toJson() => {
@@ -208,6 +208,6 @@ class TournamentForm {
         'prize_pool_kobo': prizePoolKobo,
         'attempts_per_game': attemptsPerGame,
         'participant_limit': participantLimit,
-        'entry_code': entryCode,
+        if (entryCode != null && entryCode!.isNotEmpty) 'entry_code': entryCode,
       };
 }

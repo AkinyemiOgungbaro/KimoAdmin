@@ -23,8 +23,9 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
   final _subcategory = TextEditingController();
   final _coinCost = TextEditingController();
   final _cashCost = TextEditingController();
+  final _discountPercent = TextEditingController();
   final _price = TextEditingController();
-  final _stock = TextEditingController();
+  final _stock = TextEditingController(text: '0');
 
   static const _categories = <(String, String)>[
     ('gadget', 'Gadget'),
@@ -38,8 +39,21 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
     ('data', 'Data'),
   ];
 
+  static const _networks = <(String, String)>[
+    ('mtn', 'MTN'),
+    ('glo', 'Glo'),
+    ('airtel', 'Airtel'),
+    ('9mobile', '9mobile'),
+  ];
+
   String _category = 'gadget';
   String _type = 'physical';
+  String _network = 'mtn';
+  
+  List<DataPlan> _dataPlans = [];
+  bool _fetchingPlans = false;
+  String? _selectedVariation;
+
   PlatformFile? _picked;
   bool _busy = false;
   String? _error;
@@ -55,19 +69,50 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
       _subcategory.text = e.subcategory ?? '';
       _coinCost.text = e.coinCost.toStringAsFixed(0);
       _cashCost.text = (e.cashCostKobo / 100).toStringAsFixed(0);
+      _discountPercent.text = e.discountPercent.toStringAsFixed(0);
       _price.text = (e.priceKobo / 100).toStringAsFixed(0);
       _stock.text = e.stock.toStringAsFixed(0);
       if (_categories.any((c) => c.$1 == e.category)) _category = e.category;
       if (_types.any((t) => t.$1 == e.type)) _type = e.type;
+      if (e.network != null) {
+        final net = e.network!.toLowerCase();
+        if (_networks.any((n) => n.$1 == net)) {
+          _network = net;
+        }
+      }
+      if (_type == 'data') {
+        _selectedVariation = e.providerVariationId;
+        _fetchDataPlans();
+      }
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_name, _description, _subcategory, _coinCost, _cashCost, _price, _stock]) {
+    for (final c in [_name, _description, _subcategory, _coinCost, _cashCost, _discountPercent, _price, _stock]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _fetchDataPlans() async {
+    if (_type != 'data') return;
+    setState(() => _fetchingPlans = true);
+    try {
+      final plans = await rewardsRepository.getDataPlans(_network);
+      if (mounted) {
+        setState(() {
+          _dataPlans = plans;
+          if (plans.isNotEmpty && !plans.any((p) => p.variationCode == _selectedVariation)) {
+            _selectedVariation = plans.first.variationCode;
+          }
+        });
+      }
+    } catch (e) {
+      if (mounted) _fail('Failed to fetch data plans');
+    } finally {
+      if (mounted) setState(() => _fetchingPlans = false);
+    }
   }
 
   Future<void> _pickImage() async {
@@ -80,33 +125,50 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
   Future<void> _submit() async {
     setState(() => _error = null);
 
+    final isData = _type == 'data';
+    final isDigital = _type == 'airtime' || isData;
+
     final name = _name.text.trim();
-    if (name.isEmpty) return _fail('Enter a product name');
+    if (!isData && name.isEmpty) return _fail('Enter a product name');
 
     final coin = num.tryParse(_coinCost.text.trim());
     if (coin == null || coin < 0) return _fail('Enter a valid coin cost');
 
-    final cash = num.tryParse(_cashCost.text.trim());
-    if (cash == null || cash < 0) return _fail('Enter a valid cash cost');
+    num? cash, discount;
+    if (isDigital) {
+      discount = num.tryParse(_discountPercent.text.trim());
+      if (discount == null || discount < 0) return _fail('Enter a valid discount percent');
+    } else {
+      cash = num.tryParse(_cashCost.text.trim());
+      if (cash == null || cash < 0) return _fail('Enter a valid cash cost');
+    }
 
-    final price = num.tryParse(_price.text.trim());
-    if (price == null || price < 0) return _fail('Enter a valid price');
+    num? price;
+    if (!isData) {
+      price = num.tryParse(_price.text.trim());
+      if (price == null || price < 0) return _fail('Enter a valid price');
+    }
 
     final stock = int.tryParse(_stock.text.trim());
-    if (stock == null || stock < 0) return _fail('Enter a valid stock quantity');
+    if (!isData && (stock == null || stock < 0)) return _fail('Enter a valid stock quantity');
 
-    if (!_isEdit && _picked == null) return _fail('Add a product image');
+    if (!_isEdit && _picked == null && !isDigital) return _fail('Add a product image');
+
+    if (isData && _selectedVariation == null) return _fail('Select a data plan');
 
     final form = RewardForm(
-      name: name,
+      name: isData ? null : name,
       description: _description.text.trim(),
       type: _type,
       category: _category,
       subcategory: _subcategory.text.trim(),
-      priceKobo: (price * 100).round(),
+      network: isDigital ? _network : null,
+      variationCode: isData ? _selectedVariation : null,
+      priceKobo: isData ? null : (price! * 100).round(),
       coinCost: coin,
-      cashCostKobo: (cash * 100).round(),
-      stock: stock,
+      cashCostKobo: isDigital ? null : (cash! * 100).round(),
+      discountPercent: isDigital ? discount : null,
+      stock: isData ? 0 : stock,
       imageBytes: _picked?.bytes,
       imageFilename: _picked?.name,
     );
@@ -156,43 +218,108 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 ],
               ),
               const SizedBox(height: 20),
-              _label('Product Name'),
-              TextField(controller: _name, decoration: fieldDecoration(hint: 'e.g. MTN 1GB Data')),
-              const SizedBox(height: 14),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(child: _dropdown('Category', _category, _categories, (v) => setState(() => _category = v))),
                   const SizedBox(width: 12),
-                  Expanded(child: _dropdown('Type', _type, _types, (v) => setState(() => _type = v))),
+                  Expanded(child: _dropdown('Type', _type, _types, (v) {
+                    setState(() => _type = v);
+                    if (v == 'data') _fetchDataPlans();
+                  })),
                 ],
               ),
               const SizedBox(height: 14),
-              _label('Subcategory / Network (optional)'),
-              TextField(
-                controller: _subcategory,
-                decoration: fieldDecoration(hint: 'e.g. MTN, Power banks'),
-              ),
-              const SizedBox(height: 14),
+              if (_type == 'data' || _type == 'airtime') ...[
+                _dropdown('Network', _network, _networks, (v) {
+                  setState(() => _network = v);
+                  if (_type == 'data') _fetchDataPlans();
+                }),
+                const SizedBox(height: 14),
+              ] else ...[
+                _label('Subcategory (optional)'),
+                TextField(
+                  controller: _subcategory,
+                  decoration: fieldDecoration(hint: 'e.g. Power banks'),
+                ),
+                const SizedBox(height: 14),
+              ],
+              
+              if (_type == 'data') ...[
+                _label('Data Plan'),
+                if (_fetchingPlans)
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (_dataPlans.isEmpty)
+                  Text('No plans available for $_network', style: GoogleFonts.inter(color: AppColors.statusRed))
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.pageBg,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.divider),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            value: _selectedVariation,
+                            isExpanded: true,
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textMuted),
+                            items: _dataPlans.map((p) => DropdownMenuItem(
+                              value: p.variationCode,
+                              child: Text(p.name, style: GoogleFonts.inter(fontSize: 13), overflow: TextOverflow.ellipsis),
+                            )).toList(),
+                            onChanged: (v) => setState(() => _selectedVariation = v),
+                          ),
+                        ),
+                      ),
+                      if (_selectedVariation != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Provider Cost: ₦${(_dataPlans.firstWhere((p) => p.variationCode == _selectedVariation).amountKobo / 100).toStringAsFixed(2)}',
+                          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ],
+                  ),
+                const SizedBox(height: 14),
+              ] else ...[
+                _label('Product Name'),
+                TextField(controller: _name, decoration: fieldDecoration(hint: 'e.g. MTN 1GB Data')),
+                const SizedBox(height: 14),
+              ],
+
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(child: _numberField('Coin Cost', _coinCost)),
                   const SizedBox(width: 12),
-                  Expanded(child: _numberField('Cash Cost (₦)', _cashCost)),
+                  if (_type == 'airtime' || _type == 'data')
+                    Expanded(child: _numberField('Discount (%)', _discountPercent))
+                  else
+                    Expanded(child: _numberField('Cash Cost (₦)', _cashCost)),
                 ],
               ),
               const SizedBox(height: 14),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _numberField('Price (₦)', _price)),
-                  const SizedBox(width: 12),
-                  Expanded(child: _numberField('Stock', _stock)),
-                ],
-              ),
-              const SizedBox(height: 14),
-              _label('Product Image'),
+              
+              if (_type != 'data') ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _numberField('Price (₦)', _price)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _numberField('Stock', _stock)),
+                  ],
+                ),
+                const SizedBox(height: 14),
+              ],
+              
+              _label('Product Image (Optional for data/airtime)'),
               _imagePicker(),
               if (_error != null) ...[
                 const SizedBox(height: 16),

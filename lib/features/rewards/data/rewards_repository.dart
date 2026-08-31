@@ -15,6 +15,12 @@ class RewardsRepository {
     return RewardsPageData.fromJson((data as Map).cast<String, dynamic>());
   }
 
+  Future<List<DataPlan>> getDataPlans(String network) async {
+    final res = await _api.get('/admin/rewards/data-plans', query: {'network': network});
+    final items = (res['items'] as List?) ?? [];
+    return items.map((e) => DataPlan.fromJson((e as Map).cast<String, dynamic>())).toList();
+  }
+
   Future<RewardItem> get(String id) async {
     final data = await _api.get('/admin/rewards/$id');
     final json = (data is Map && data['reward'] is Map) ? data['reward'] : data;
