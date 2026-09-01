@@ -47,7 +47,8 @@ class AsyncView<T> extends StatelessWidget {
               );
             }
             if (snap.hasData) return builder(context, snap.data as T);
-            return _Center(minHeight: minHeight, child: const SizedBox.shrink());
+            return _Center(
+                minHeight: minHeight, child: const SizedBox.shrink());
         }
       },
     );
@@ -78,14 +79,16 @@ class _ErrorBody extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Icon(Icons.error_outline_rounded, color: AppColors.statusRed, size: 32),
+        const Icon(Icons.error_outline_rounded,
+            color: AppColors.statusRed, size: 32),
         const SizedBox(height: 10),
         ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 360),
           child: Text(
             message,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary),
+            style:
+                GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary),
           ),
         ),
         if (onRetry != null) ...[

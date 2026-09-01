@@ -10,6 +10,7 @@ import '../../shared/widgets/paginator.dart';
 import '../../shared/widgets/status_badge.dart';
 import '../../theme/app_theme.dart';
 import 'add_user_dialog.dart';
+import 'adjust_balance_dialog.dart';
 import 'data/user_models.dart';
 
 class UsersPage extends StatefulWidget {
@@ -101,7 +102,8 @@ class _UsersPageState extends State<UsersPage> {
   Future<void> _setStatus(UserListItem user, String status) async {
     try {
       await usersRepository.setStatus(user.id, status);
-      _toast('${user.displayName} is now ${status == 'active' ? 'active' : 'unverified'}');
+      _toast(
+          '${user.displayName} is now ${status == 'active' ? 'active' : 'unverified'}');
       _reload();
     } catch (e) {
       _toast('Could not update status: $e', error: true);
@@ -130,12 +132,16 @@ class _UsersPageState extends State<UsersPage> {
               children: [
                 Text('Users',
                     style: GoogleFonts.inter(
-                        fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary)),
                 const Spacer(),
                 if (_totalUsers != null)
                   Text('${Format.number(_totalUsers)} total users',
                       style: GoogleFonts.inter(
-                          fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textSecondary)),
               ],
             ),
             const SizedBox(height: 20),
@@ -154,14 +160,18 @@ class _UsersPageState extends State<UsersPage> {
                       onChanged: _onSearchChanged,
                       decoration: InputDecoration(
                         hintText: 'Search by name, username or email',
-                        hintStyle: GoogleFonts.inter(color: AppColors.textMuted, fontSize: 13),
+                        hintStyle: GoogleFonts.inter(
+                            color: AppColors.textMuted, fontSize: 13),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        prefixIcon: const Icon(Icons.search, color: AppColors.textMuted, size: 18),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 14),
+                        prefixIcon: const Icon(Icons.search,
+                            color: AppColors.textMuted, size: 18),
                         suffixIcon: _search.isEmpty
                             ? null
                             : IconButton(
-                                icon: const Icon(Icons.close, size: 16, color: AppColors.textMuted),
+                                icon: const Icon(Icons.close,
+                                    size: 16, color: AppColors.textMuted),
                                 onPressed: () {
                                   _searchCtrl.clear();
                                   _onSearchChanged('');
@@ -177,14 +187,18 @@ class _UsersPageState extends State<UsersPage> {
                   onPressed: _exporting ? null : _exportCsv,
                   icon: _exporting
                       ? const SizedBox(
-                          width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2))
                       : const Icon(Icons.download_outlined, size: 18),
                   label: const Text('Export CSV'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.textPrimary,
                     side: const BorderSide(color: AppColors.divider),
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 14),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -193,11 +207,15 @@ class _UsersPageState extends State<UsersPage> {
                   icon: const Icon(Icons.add, color: Colors.white, size: 18),
                   label: Text('Add User',
                       style: GoogleFonts.inter(
-                          fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
                   ),
                 ),
@@ -231,7 +249,8 @@ class _UsersPageState extends State<UsersPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                   child: Row(
                     children: [
                       _col('User', flex: 3),
@@ -250,16 +269,19 @@ class _UsersPageState extends State<UsersPage> {
                   child: data.items.isEmpty
                       ? Center(
                           child: Text('No users found',
-                              style: GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted)),
+                              style: GoogleFonts.inter(
+                                  fontSize: 13, color: AppColors.textMuted)),
                         )
                       : ListView.separated(
                           itemCount: data.items.length,
-                          separatorBuilder: (_, __) =>
-                              const Divider(height: 1, indent: 20, endIndent: 20),
+                          separatorBuilder: (_, __) => const Divider(
+                              height: 1, indent: 20, endIndent: 20),
                           itemBuilder: (ctx, i) => _UserRow(
                             user: data.items[i],
                             onView: () => _showUser(data.items[i]),
-                            onSetStatus: (status) => _setStatus(data.items[i], status),
+                            onSetStatus: (status) =>
+                                _setStatus(data.items[i], status),
+                            onReload: _reload,
                           ),
                         ),
                 ),
@@ -271,7 +293,8 @@ class _UsersPageState extends State<UsersPage> {
         Row(
           children: [
             Text('Page ${data.page} of ${data.pageCount}',
-                style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textSecondary)),
             const Spacer(),
             Paginator(
               currentPage: data.page,
@@ -306,7 +329,9 @@ class _UsersPageState extends State<UsersPage> {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Close')),
         ],
       ),
     );
@@ -320,12 +345,15 @@ class _UsersPageState extends State<UsersPage> {
             SizedBox(
               width: 110,
               child: Text(k,
-                  style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.textSecondary)),
             ),
             Expanded(
               child: Text(v,
                   style: GoogleFonts.inter(
-                      fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary)),
             ),
           ],
         ),
@@ -336,7 +364,9 @@ class _UsersPageState extends State<UsersPage> {
       flex: flex,
       child: Text(text,
           style: GoogleFonts.inter(
-              fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary)),
     );
   }
 }
@@ -345,7 +375,12 @@ class _UserRow extends StatefulWidget {
   final UserListItem user;
   final VoidCallback onView;
   final ValueChanged<String> onSetStatus;
-  const _UserRow({required this.user, required this.onView, required this.onSetStatus});
+  final VoidCallback onReload;
+  const _UserRow(
+      {required this.user,
+      required this.onView,
+      required this.onSetStatus,
+      required this.onReload});
 
   @override
   State<_UserRow> createState() => _UserRowState();
@@ -374,12 +409,18 @@ class _UserRowState extends State<_UserRow> {
                     radius: 18,
                     backgroundColor: const Color(0xFF00BCD4),
                     backgroundImage:
-                        (u.avatarUrl != null && u.avatarUrl!.isNotEmpty) ? NetworkImage(u.avatarUrl!) : null,
+                        (u.avatarUrl != null && u.avatarUrl!.isNotEmpty)
+                            ? NetworkImage(u.avatarUrl!)
+                            : null,
                     child: (u.avatarUrl == null || u.avatarUrl!.isEmpty)
                         ? Text(
-                            u.displayName.isNotEmpty ? u.displayName[0].toUpperCase() : '?',
+                            u.displayName.isNotEmpty
+                                ? u.displayName[0].toUpperCase()
+                                : '?',
                             style: GoogleFonts.inter(
-                                fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white),
                           )
                         : null,
                   ),
@@ -392,11 +433,14 @@ class _UserRowState extends State<_UserRow> {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.inter(
-                                fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textPrimary)),
                         Text('@${u.username}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted)),
+                            style: GoogleFonts.inter(
+                                fontSize: 11, color: AppColors.textMuted)),
                       ],
                     ),
                   ),
@@ -408,13 +452,19 @@ class _UserRowState extends State<_UserRow> {
             Expanded(flex: 2, child: _cell(Format.number(u.coins))),
             Expanded(flex: 2, child: _cell(Format.naira(u.cashKobo))),
             Expanded(flex: 1, child: _cell(Format.number(u.gamesPlayed))),
-            Expanded(flex: 2, child: Align(alignment: Alignment.centerLeft, child: StatusBadge(status: u.status))),
+            Expanded(
+                flex: 2,
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: StatusBadge(status: u.status))),
             Expanded(
               flex: 1,
               child: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_horiz, color: AppColors.textSecondary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                onSelected: (value) {
+                icon: const Icon(Icons.more_horiz,
+                    color: AppColors.textSecondary),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                onSelected: (value) async {
                   switch (value) {
                     case 'view':
                       widget.onView();
@@ -425,10 +475,18 @@ class _UserRowState extends State<_UserRow> {
                     case 'unverify':
                       widget.onSetStatus('unverified');
                       break;
+                    case 'adjust_balance':
+                      final adjusted =
+                          await AdjustBalanceDialog.show(context, u);
+                      if (adjusted == true) {
+                        widget.onReload();
+                      }
+                      break;
                   }
                 },
                 itemBuilder: (_) => [
                   _menuItem('view', 'View details'),
+                  _menuItem('adjust_balance', 'Adjust balance'),
                   if (isActive)
                     _menuItem('unverify', 'Set unverified')
                   else

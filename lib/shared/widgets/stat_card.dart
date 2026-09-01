@@ -51,7 +51,9 @@ class StatCard extends StatelessWidget {
             Row(
               children: [
                 Icon(
-                  positive ? Icons.trending_up_rounded : Icons.trending_down_rounded,
+                  positive
+                      ? Icons.trending_up_rounded
+                      : Icons.trending_down_rounded,
                   size: 14,
                   color: positive ? AppColors.statusGreen : AppColors.statusRed,
                 ),
@@ -61,7 +63,8 @@ class StatCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: positive ? AppColors.statusGreen : AppColors.statusRed,
+                    color:
+                        positive ? AppColors.statusGreen : AppColors.statusRed,
                   ),
                 ),
               ],

@@ -9,7 +9,8 @@ class RangeDropdown extends StatelessWidget {
   final RangePeriod value;
   final ValueChanged<RangePeriod> onChanged;
 
-  const RangeDropdown({super.key, required this.value, required this.onChanged});
+  const RangeDropdown(
+      {super.key, required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,8 @@ class RangeDropdown extends StatelessWidget {
           value: value,
           items: kRangePeriods
               .map((p) => DropdownMenuItem(
-                  value: p, child: Text(p.label, style: GoogleFonts.inter(fontSize: 13))))
+                  value: p,
+                  child: Text(p.label, style: GoogleFonts.inter(fontSize: 13))))
               .toList(),
           onChanged: (p) => p == null ? null : onChanged(p),
           icon: const Icon(Icons.keyboard_arrow_down_rounded),

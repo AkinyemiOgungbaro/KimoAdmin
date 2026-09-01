@@ -73,24 +73,32 @@ class _AddUserDialogState extends State<AddUserDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _DialogHeader(title: 'Add User', onClose: () => Navigator.pop(context)),
+                _DialogHeader(
+                    title: 'Add User', onClose: () => Navigator.pop(context)),
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    Expanded(child: _field('First name', _firstName, required: true)),
+                    Expanded(
+                        child:
+                            _field('First name', _firstName, required: true)),
                     const SizedBox(width: 12),
-                    Expanded(child: _field('Surname', _surname, required: true)),
+                    Expanded(
+                        child: _field('Surname', _surname, required: true)),
                   ],
                 ),
                 const SizedBox(height: 14),
                 _field('Username', _username, required: true),
                 const SizedBox(height: 14),
-                _field('Email', _email, required: true, email: true,
+                _field('Email', _email,
+                    required: true,
+                    email: true,
                     keyboardType: TextInputType.emailAddress),
                 const SizedBox(height: 14),
-                _field('Phone number', _phone, keyboardType: TextInputType.phone),
+                _field('Phone number', _phone,
+                    keyboardType: TextInputType.phone),
                 const SizedBox(height: 14),
-                _field('Password', _password, required: true, obscure: true, minLen: 6),
+                _field('Password', _password,
+                    required: true, obscure: true, minLen: 6),
                 if (_error != null) ...[
                   const SizedBox(height: 16),
                   _ErrorBanner(_error!),
@@ -106,11 +114,14 @@ class _AddUserDialogState extends State<AddUserDialog> {
                     const SizedBox(width: 8),
                     FilledButton(
                       onPressed: _busy ? null : _submit,
-                      style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+                      style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary),
                       child: _busy
                           ? const SizedBox(
-                              width: 18, height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2.5, color: Colors.white))
                           : const Text('Create user'),
                     ),
                   ],
@@ -137,7 +148,9 @@ class _AddUserDialogState extends State<AddUserDialog> {
       children: [
         Text(label,
             style: GoogleFonts.inter(
-                fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
         const SizedBox(height: 6),
         TextFormField(
           controller: controller,
@@ -147,7 +160,8 @@ class _AddUserDialogState extends State<AddUserDialog> {
           validator: (v) {
             final value = v?.trim() ?? '';
             if (required && value.isEmpty) return 'Required';
-            if (email && value.isNotEmpty && !value.contains('@')) return 'Enter a valid email';
+            if (email && value.isNotEmpty && !value.contains('@'))
+              return 'Enter a valid email';
             if (minLen != null && value.isNotEmpty && value.length < minLen) {
               return 'At least $minLen characters';
             }
@@ -170,11 +184,14 @@ class _DialogHeader extends StatelessWidget {
       children: [
         Text(title,
             style: GoogleFonts.inter(
-                fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary)),
         const Spacer(),
         IconButton(
           onPressed: onClose,
-          icon: const Icon(Icons.close_rounded, size: 20, color: AppColors.textSecondary),
+          icon: const Icon(Icons.close_rounded,
+              size: 20, color: AppColors.textSecondary),
           visualDensity: VisualDensity.compact,
         ),
       ],
@@ -197,11 +214,13 @@ class _ErrorBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: 18, color: AppColors.statusRed),
+          const Icon(Icons.error_outline_rounded,
+              size: 18, color: AppColors.statusRed),
           const SizedBox(width: 8),
           Expanded(
             child: Text(message,
-                style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.statusRed)),
+                style: GoogleFonts.inter(
+                    fontSize: 12.5, color: AppColors.statusRed)),
           ),
         ],
       ),

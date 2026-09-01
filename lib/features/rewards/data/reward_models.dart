@@ -74,14 +74,16 @@ class RewardsPageData {
     required this.limit,
   });
 
-  int get pageCount => limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
+  int get pageCount =>
+      limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
 
   factory RewardsPageData.fromJson(Map<String, dynamic> j) => RewardsPageData(
         items: ((j['items'] as List?) ?? const [])
             .map((e) => RewardItem.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
-        subcategories:
-            ((j['subcategories'] as List?) ?? const []).map((e) => e.toString()).toList(),
+        subcategories: ((j['subcategories'] as List?) ?? const [])
+            .map((e) => e.toString())
+            .toList(),
         total: (j['total'] as num?)?.toInt() ?? 0,
         page: (j['page'] as num?)?.toInt() ?? 1,
         limit: (j['limit'] as num?)?.toInt() ?? 12,
@@ -130,10 +132,13 @@ class RewardForm {
       'coin_cost': coinCost,
     };
     if (name != null) map['name'] = name;
-    if (description != null && description!.isNotEmpty) map['description'] = description;
-    if (subcategory != null && subcategory!.isNotEmpty) map['subcategory'] = subcategory;
+    if (description != null && description!.isNotEmpty)
+      map['description'] = description;
+    if (subcategory != null && subcategory!.isNotEmpty)
+      map['subcategory'] = subcategory;
     if (network != null && network!.isNotEmpty) map['network'] = network;
-    if (variationCode != null && variationCode!.isNotEmpty) map['variation_code'] = variationCode;
+    if (variationCode != null && variationCode!.isNotEmpty)
+      map['variation_code'] = variationCode;
     if (priceKobo != null) map['price_kobo'] = priceKobo;
     if (cashCostKobo != null) map['cash_cost_kobo'] = cashCostKobo;
     if (discountPercent != null) map['discount_percent'] = discountPercent;

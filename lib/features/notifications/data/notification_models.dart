@@ -78,7 +78,9 @@ class NotificationsPageData {
 
   factory NotificationsPageData.fromJson(Map<String, dynamic> json) {
     return NotificationsPageData(
-      items: (json['items'] as List).map((x) => NotificationItem.fromJson(x)).toList(),
+      items: (json['items'] as List)
+          .map((x) => NotificationItem.fromJson(x))
+          .toList(),
       counts: NotificationCounts.fromJson(json['counts']),
       unread: json['unread'] ?? 0,
       total: json['total'] ?? 0,

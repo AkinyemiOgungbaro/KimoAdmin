@@ -89,20 +89,31 @@ class _DashboardPageState extends State<DashboardPage> {
     final signupChange = d.newSignups.changePercent;
     final cards = <Widget>[
       StatCard(label: 'Total Users', value: Format.number(d.totalUsers.value)),
-      StatCard(label: 'Active Players', value: Format.number(d.activePlayers.value)),
+      StatCard(
+          label: 'Active Players', value: Format.number(d.activePlayers.value)),
       StatCard(
         label: 'New Signups',
         value: Format.number(d.newSignups.value),
-        change: signupChange == null ? null : '${signupChange.abs().toStringAsFixed(1)}%',
+        change: signupChange == null
+            ? null
+            : '${signupChange.abs().toStringAsFixed(1)}%',
         positive: (signupChange ?? 0) >= 0,
       ),
-      StatCard(label: 'Rounds Played', value: Format.number(d.roundsPlayed.value)),
-      StatCard(label: 'Coins Awarded', value: Format.compact(d.coinsAwarded.value)),
+      StatCard(
+          label: 'Rounds Played', value: Format.number(d.roundsPlayed.value)),
+      StatCard(
+          label: 'Coins Awarded', value: Format.compact(d.coinsAwarded.value)),
       StatCard(label: 'Revenue', value: Format.naira(d.revenueKobo.value)),
       StatCard(label: 'Ad Views', value: Format.number(d.adViews.value)),
-      StatCard(label: 'Coins Redeemed', value: Format.compact(d.coinsRedeemed.value)),
-      StatCard(label: 'Tournament Entries', value: Format.number(d.tournamentEntries.value)),
-      StatCard(label: 'Home Screen Installs', value: Format.number(d.homeScreenInstalls.value)),
+      StatCard(
+          label: 'Coins Redeemed',
+          value: Format.compact(d.coinsRedeemed.value)),
+      StatCard(
+          label: 'Tournament Entries',
+          value: Format.number(d.tournamentEntries.value)),
+      StatCard(
+          label: 'Home Screen Installs',
+          value: Format.number(d.homeScreenInstalls.value)),
     ];
 
     return LayoutBuilder(builder: (ctx, constraints) {
@@ -175,7 +186,10 @@ class _DashboardPageState extends State<DashboardPage> {
           const SizedBox(width: 12),
           Expanded(flex: 4, child: _TopPlayersCard(players: d.topPlayers)),
           const SizedBox(width: 12),
-          Expanded(flex: 3, child: _UpcomingTournamentsCard(tournaments: d.upcomingTournaments)),
+          Expanded(
+              flex: 3,
+              child:
+                  _UpcomingTournamentsCard(tournaments: d.upcomingTournaments)),
         ],
       ),
     );
@@ -202,7 +216,9 @@ class _ChartCard extends StatelessWidget {
         children: [
           Text(title,
               style: GoogleFonts.inter(
-                  fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
           const SizedBox(height: 12),
           Expanded(child: child),
         ],
@@ -230,7 +246,9 @@ class _CardShell extends StatelessWidget {
         children: [
           Text(title,
               style: GoogleFonts.inter(
-                  fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
           const SizedBox(height: 10),
           Expanded(child: child),
         ],
@@ -246,7 +264,8 @@ class _EmptyHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(text, style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted)),
+      child: Text(text,
+          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textMuted)),
     );
   }
 }
@@ -267,10 +286,14 @@ class _LiveFeedCard extends StatelessWidget {
   String _amountLabel(ActivityEntry a) {
     final c = a.currency.toLowerCase();
     if (c == 'coins' || c == 'coin') {
-      return a.amount > 0 ? '+${Format.compact(a.amount)}' : Format.compact(a.amount);
+      return a.amount > 0
+          ? '+${Format.compact(a.amount)}'
+          : Format.compact(a.amount);
     }
-    if (c == 'ngn' || c == 'naira' || c == 'kobo') return Format.naira(a.amount);
-    return '${a.amount > 0 ? '+' : ''}${Format.compact(a.amount)} ${a.currency}'.trim();
+    if (c == 'ngn' || c == 'naira' || c == 'kobo')
+      return Format.naira(a.amount);
+    return '${a.amount > 0 ? '+' : ''}${Format.compact(a.amount)} ${a.currency}'
+        .trim();
   }
 
   @override
@@ -299,7 +322,8 @@ class _LiveFeedCard extends StatelessWidget {
                                   color: AppColors.textPrimary)),
                           Text(_prettyReason(a.reason),
                               style: GoogleFonts.inter(
-                                  fontSize: 11, color: AppColors.textSecondary)),
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary)),
                         ],
                       ),
                     ),
@@ -375,15 +399,22 @@ class _TopPlayersCard extends StatelessWidget {
         flex: flex,
         child: Text(t,
             style: GoogleFonts.inter(
-                fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary)),
       );
 
-  Widget _c(String t, {required int flex, FontWeight weight = FontWeight.w400}) => Expanded(
+  Widget _c(String t,
+          {required int flex, FontWeight weight = FontWeight.w400}) =>
+      Expanded(
         flex: flex,
         child: Text(t,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.inter(fontSize: 13, fontWeight: weight, color: AppColors.textPrimary)),
+            style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: weight,
+                color: AppColors.textPrimary)),
       );
 }
 
@@ -414,7 +445,8 @@ class _UpcomingTournamentsCard extends StatelessWidget {
                           color: AppColors.primaryLight,
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Center(child: Text('🏆', style: TextStyle(fontSize: 18))),
+                        child: const Center(
+                            child: Text('🏆', style: TextStyle(fontSize: 18))),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -430,7 +462,8 @@ class _UpcomingTournamentsCard extends StatelessWidget {
                                     color: AppColors.textPrimary)),
                             Text(Format.dateShort(t.startsAt),
                                 style: GoogleFonts.inter(
-                                    fontSize: 11, color: AppColors.textSecondary)),
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -444,7 +477,8 @@ class _UpcomingTournamentsCard extends StatelessWidget {
                                   color: AppColors.textPrimary)),
                           Text('${Format.number(t.entrants)} entrants',
                               style: GoogleFonts.inter(
-                                  fontSize: 10, color: AppColors.textSecondary)),
+                                  fontSize: 10,
+                                  color: AppColors.textSecondary)),
                         ],
                       ),
                     ],
@@ -476,7 +510,8 @@ class _PeriodDropdown extends StatelessWidget {
           value: value,
           items: kRangePeriods
               .map((p) => DropdownMenuItem(
-                  value: p, child: Text(p.label, style: GoogleFonts.inter(fontSize: 13))))
+                  value: p,
+                  child: Text(p.label, style: GoogleFonts.inter(fontSize: 13))))
               .toList(),
           onChanged: (p) => p == null ? null : onChanged(p),
           icon: const Icon(Icons.keyboard_arrow_down_rounded),

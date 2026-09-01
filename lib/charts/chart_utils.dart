@@ -4,7 +4,8 @@ import 'dart:math' as math;
 double niceMaxY(List<double> data) {
   final maxV = data.isEmpty ? 0.0 : data.reduce(math.max);
   if (maxV <= 0) return 10;
-  final magnitude = math.pow(10, (math.log(maxV) / math.ln10).floor()).toDouble();
+  final magnitude =
+      math.pow(10, (math.log(maxV) / math.ln10).floor()).toDouble();
   final norm = maxV / magnitude;
   final double niceNorm;
   if (norm <= 1) {

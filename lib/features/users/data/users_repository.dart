@@ -5,7 +5,8 @@ class UsersRepository {
   final ApiClient _api;
   UsersRepository(this._api);
 
-  Future<UsersPageData> list({String? search, int page = 1, int limit = 10}) async {
+  Future<UsersPageData> list(
+      {String? search, int page = 1, int limit = 10}) async {
     final data = await _api.get('/admin/users', query: {
       if (search != null && search.isNotEmpty) 'search': search,
       'page': page,
@@ -20,7 +21,8 @@ class UsersRepository {
     return UserListItem.fromJson((json as Map).cast<String, dynamic>());
   }
 
-  Future<void> create(NewUser user) => _api.post('/admin/users', data: user.toJson());
+  Future<void> create(NewUser user) =>
+      _api.post('/admin/users', data: user.toJson());
 
   /// [status] is one of `active` | `unverified`.
   Future<void> setStatus(String id, String status) =>

@@ -38,7 +38,8 @@ class Paginator extends StatelessWidget {
           onTap: () => onSelect(currentPage - 1),
         ),
         const SizedBox(width: 4),
-        for (final p in pages) _PageBox(page: p, active: p == currentPage, onTap: () => onSelect(p)),
+        for (final p in pages)
+          _PageBox(page: p, active: p == currentPage, onTap: () => onSelect(p)),
         const SizedBox(width: 4),
         _Arrow(
           icon: Icons.chevron_right_rounded,
@@ -54,7 +55,8 @@ class _PageBox extends StatelessWidget {
   final int page;
   final bool active;
   final VoidCallback onTap;
-  const _PageBox({required this.page, required this.active, required this.onTap});
+  const _PageBox(
+      {required this.page, required this.active, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +93,8 @@ class _Arrow extends StatelessWidget {
   final IconData icon;
   final bool enabled;
   final VoidCallback onTap;
-  const _Arrow({required this.icon, required this.enabled, required this.onTap});
+  const _Arrow(
+      {required this.icon, required this.enabled, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +109,8 @@ class _Arrow extends StatelessWidget {
           border: Border.all(color: AppColors.divider),
         ),
         child: Icon(icon,
-            size: 20, color: enabled ? AppColors.textSecondary : AppColors.textMuted),
+            size: 20,
+            color: enabled ? AppColors.textSecondary : AppColors.textMuted),
       ),
     );
   }

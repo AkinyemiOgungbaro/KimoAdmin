@@ -62,7 +62,8 @@ class _RewardsPageState extends State<RewardsPage>
   String? get _category => _tabs[_tabIndex].$2;
 
   void _load() {
-    _future = rewardsRepository.list(category: _category, page: _page, limit: _limit);
+    _future =
+        rewardsRepository.list(category: _category, page: _page, limit: _limit);
     _future.then(
       (d) {
         if (mounted) setState(() => _total = d.total);
@@ -80,7 +81,8 @@ class _RewardsPageState extends State<RewardsPage>
 
   void _toast(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _add() async {
@@ -146,13 +148,16 @@ class _RewardsPageState extends State<RewardsPage>
               children: [
                 Text('Rewards',
                     style: GoogleFonts.inter(
-                        fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary)),
                 const SizedBox(width: 12),
                 if (_total != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Text('${Format.number(_total)} items',
-                        style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
+                        style: GoogleFonts.inter(
+                            fontSize: 14, color: AppColors.textSecondary)),
                   ),
               ],
             ),
@@ -170,14 +175,19 @@ class _RewardsPageState extends State<RewardsPage>
                 const SizedBox(width: 16),
                 ElevatedButton.icon(
                   onPressed: _add,
-                  icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                  icon: const Icon(Icons.add_rounded,
+                      size: 18, color: Colors.white),
                   label: Text('Add Reward',
                       style: GoogleFonts.inter(
-                          fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
                   ),
                 ),
@@ -194,7 +204,8 @@ class _RewardsPageState extends State<RewardsPage>
                 child: Column(
                   children: [
                     const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                       child: _HeaderRow(),
                     ),
                     const Divider(height: 1),
@@ -207,7 +218,8 @@ class _RewardsPageState extends State<RewardsPage>
                             return Center(
                               child: Text('No rewards in this category yet.',
                                   style: GoogleFonts.inter(
-                                      fontSize: 14, color: AppColors.textSecondary)),
+                                      fontSize: 14,
+                                      color: AppColors.textSecondary)),
                             );
                           }
                           return Column(
@@ -220,8 +232,10 @@ class _RewardsPageState extends State<RewardsPage>
                                   itemBuilder: (_, i) => _RewardRow(
                                     reward: data.items[i],
                                     onEdit: () => _edit(data.items[i]),
-                                    onOutOfStock: () => _outOfStock(data.items[i]),
-                                    onToggleActive: () => _toggleActive(data.items[i]),
+                                    onOutOfStock: () =>
+                                        _outOfStock(data.items[i]),
+                                    onToggleActive: () =>
+                                        _toggleActive(data.items[i]),
                                   ),
                                 ),
                               ),
@@ -263,7 +277,9 @@ class _HeaderRow extends StatelessWidget {
           flex: flex,
           child: Text(t,
               style: GoogleFonts.inter(
-                  fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
         );
     return Row(
       children: [
@@ -339,7 +355,8 @@ class _RewardRowState extends State<_RewardRow> {
                           Text(subtitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.textMuted)),
+                              style: GoogleFonts.inter(
+                                  fontSize: 11.5, color: AppColors.textMuted)),
                       ],
                     ),
                   ),
@@ -356,8 +373,10 @@ class _RewardRowState extends State<_RewardRow> {
             Expanded(
               flex: 1,
               child: PopupMenuButton<String>(
-                icon: const Icon(Icons.more_horiz, color: AppColors.textSecondary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                icon: const Icon(Icons.more_horiz,
+                    color: AppColors.textSecondary),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 onSelected: (v) {
                   if (v == 'edit') {
                     widget.onEdit();
@@ -369,7 +388,9 @@ class _RewardRowState extends State<_RewardRow> {
                 },
                 itemBuilder: (_) => [
                   _item('edit', 'Edit', AppColors.textPrimary),
-                  if (r.isActive) _item('out_of_stock', 'Mark out of stock', AppColors.textPrimary),
+                  if (r.isActive)
+                    _item('out_of_stock', 'Mark out of stock',
+                        AppColors.textPrimary),
                   _item(
                     'toggle',
                     r.isActive ? 'Deactivate' : 'Activate',
@@ -386,12 +407,16 @@ class _RewardRowState extends State<_RewardRow> {
 
   Widget _cell(String text) => Expanded(
         flex: 2,
-        child: Text(text, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+        child: Text(text,
+            style: GoogleFonts.inter(
+                fontSize: 13, color: AppColors.textSecondary)),
       );
 
-  PopupMenuItem<String> _item(String value, String label, Color color) => PopupMenuItem(
+  PopupMenuItem<String> _item(String value, String label, Color color) =>
+      PopupMenuItem(
         value: value,
-        child: Text(label, style: GoogleFonts.inter(fontSize: 13, color: color)),
+        child:
+            Text(label, style: GoogleFonts.inter(fontSize: 13, color: color)),
       );
 }
 
@@ -410,12 +435,15 @@ class _Thumb extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: imageUrl == null || imageUrl!.isEmpty
-          ? const Icon(Icons.card_giftcard_rounded, size: 18, color: AppColors.textMuted)
+          ? const Icon(Icons.card_giftcard_rounded,
+              size: 18, color: AppColors.textMuted)
           : Image.network(
               imageUrl!,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  const Icon(Icons.card_giftcard_rounded, size: 18, color: AppColors.textMuted),
+              errorBuilder: (_, __, ___) => const Icon(
+                  Icons.card_giftcard_rounded,
+                  size: 18,
+                  color: AppColors.textMuted),
             ),
     );
   }

@@ -44,14 +44,23 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
       _limit.text = e.participantLimit.toString();
       _pool.text = (e.prizePoolKobo / 100).toStringAsFixed(0);
       _entryFee.text = e.entryFeeCoins.toString();
-      _attempts.text = e.attemptsPerGame == 0 ? '1' : e.attemptsPerGame.toString();
+      _attempts.text =
+          e.attemptsPerGame == 0 ? '1' : e.attemptsPerGame.toString();
       _code.text = e.entryCode ?? '';
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_name, _duration, _limit, _pool, _entryFee, _attempts, _code]) {
+    for (final c in [
+      _name,
+      _duration,
+      _limit,
+      _pool,
+      _entryFee,
+      _attempts,
+      _code
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -72,7 +81,8 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     );
     if (time == null) return;
     setState(() {
-      _startsAt = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+      _startsAt =
+          DateTime(date.year, date.month, date.day, time.hour, time.minute);
     });
   }
 
@@ -96,20 +106,25 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     if (_startsAt == null) return _fail('Choose a start date & time');
 
     final duration = int.tryParse(_duration.text.trim());
-    if (duration == null || duration <= 0) return _fail('Enter a valid duration (minutes)');
+    if (duration == null || duration <= 0)
+      return _fail('Enter a valid duration (minutes)');
 
     final limitText = _limit.text.trim();
     final limit = limitText.isEmpty ? 0 : int.tryParse(limitText);
-    if (limit == null || limit < 0) return _fail('Enter a valid participant limit');
+    if (limit == null || limit < 0)
+      return _fail('Enter a valid participant limit');
 
     final poolNaira = num.tryParse(_pool.text.trim());
-    if (poolNaira == null || poolNaira < 0) return _fail('Enter a valid prize pool');
+    if (poolNaira == null || poolNaira < 0)
+      return _fail('Enter a valid prize pool');
 
     final entryFee = int.tryParse(_entryFee.text.trim());
-    if (entryFee == null || entryFee < 0) return _fail('Enter a valid entry fee');
+    if (entryFee == null || entryFee < 0)
+      return _fail('Enter a valid entry fee');
 
     final attempts = int.tryParse(_attempts.text.trim());
-    if (attempts == null || attempts <= 0) return _fail('Enter valid attempts per game');
+    if (attempts == null || attempts <= 0)
+      return _fail('Enter valid attempts per game');
 
     final code = _code.text.trim();
 
@@ -159,18 +174,23 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                 children: [
                   Text(_isEdit ? 'Edit Tournament' : 'Create a New Tournament',
                       style: GoogleFonts.inter(
-                          fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary)),
                   const Spacer(),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded, size: 20, color: AppColors.textSecondary),
+                    icon: const Icon(Icons.close_rounded,
+                        size: 20, color: AppColors.textSecondary),
                     visualDensity: VisualDensity.compact,
                   ),
                 ],
               ),
               const SizedBox(height: 20),
               _label('Tournament Title'),
-              TextField(controller: _name, decoration: fieldDecoration(hint: 'e.g. Weekend Cup')),
+              TextField(
+                  controller: _name,
+                  decoration: fieldDecoration(hint: 'e.g. Weekend Cup')),
               const SizedBox(height: 14),
               _label('Start Date & Time'),
               InkWell(
@@ -182,10 +202,14 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                         size: 18, color: AppColors.textMuted),
                   ),
                   child: Text(
-                    _startsAt == null ? 'Select date & time' : Format.dateTime(_startsAt!.toIso8601String()),
+                    _startsAt == null
+                        ? 'Select date & time'
+                        : Format.dateTime(_startsAt!.toIso8601String()),
                     style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: _startsAt == null ? AppColors.textMuted : AppColors.textPrimary),
+                        color: _startsAt == null
+                            ? AppColors.textMuted
+                            : AppColors.textPrimary),
                   ),
                 ),
               ),
@@ -193,7 +217,8 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _numberField('Duration (minutes)', _duration)),
+                  Expanded(
+                      child: _numberField('Duration (minutes)', _duration)),
                   const SizedBox(width: 12),
                   Expanded(child: _numberField('Participant Limit', _limit)),
                 ],
@@ -228,17 +253,21 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: _busy
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.5, color: Colors.white))
                       : Text(_isEdit ? 'Save changes' : 'Create tournament',
                           style: GoogleFonts.inter(
-                              fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white)),
                 ),
               ),
             ],
@@ -252,7 +281,9 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(text,
             style: GoogleFonts.inter(
-                fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
       );
 
   Widget _numberField(String label, TextEditingController ctrl) {
@@ -283,11 +314,14 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                 ? const Padding(
                     padding: EdgeInsets.all(12),
                     child: SizedBox(
-                        width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2)))
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(strokeWidth: 2)))
                 : TextButton(
                     onPressed: _generateCode,
                     child: Text('Generate',
-                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.primary)),
+                        style: GoogleFonts.inter(
+                            fontSize: 12, color: AppColors.primary)),
                   ),
           ),
           style: GoogleFonts.inter(fontSize: 13),
@@ -300,13 +334,17 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(color: AppColors.statusRedBg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+          color: AppColors.statusRedBg, borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: 18, color: AppColors.statusRed),
+          const Icon(Icons.error_outline_rounded,
+              size: 18, color: AppColors.statusRed),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(message, style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.statusRed)),
+            child: Text(message,
+                style: GoogleFonts.inter(
+                    fontSize: 12.5, color: AppColors.statusRed)),
           ),
         ],
       ),

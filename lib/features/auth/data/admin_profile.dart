@@ -35,7 +35,8 @@ class AdminProfile {
 
   /// Best-effort initials for the sidebar avatar.
   String get initials {
-    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts =
+        name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
     if (parts.isEmpty) return 'A';
     String first(String s) => s.substring(0, 1).toUpperCase();
     if (parts.length == 1) return first(parts.first);

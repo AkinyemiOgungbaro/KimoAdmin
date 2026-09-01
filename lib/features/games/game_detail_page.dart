@@ -57,7 +57,8 @@ class _GameDetailPageState extends State<GameDetailPage> {
       _error = null;
     });
     try {
-      final d = await gamesRepository.detail(widget.gameKey, range: _period.token);
+      final d =
+          await gamesRepository.detail(widget.gameKey, range: _period.token);
       if (!mounted) return;
       setState(() {
         _summary = d.summary;
@@ -107,7 +108,8 @@ class _GameDetailPageState extends State<GameDetailPage> {
       });
     } catch (e) {
       onFail?.call();
-      _toast(e is ApiException ? e.message : 'Could not save settings', error: true);
+      _toast(e is ApiException ? e.message : 'Could not save settings',
+          error: true);
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -116,20 +118,23 @@ class _GameDetailPageState extends State<GameDetailPage> {
   void _toggleMaintenance(bool v) {
     final prev = _maintenance;
     setState(() => _maintenance = v);
-    _patch(GameSettingsPatch(maintenance: v), onFail: () => setState(() => _maintenance = prev));
+    _patch(GameSettingsPatch(maintenance: v),
+        onFail: () => setState(() => _maintenance = prev));
   }
 
   void _toggleRandomise(bool v) {
     final prev = _randomise;
     setState(() => _randomise = v);
-    _patch(GameSettingsPatch(randomiseImages: v), onFail: () => setState(() => _randomise = prev));
+    _patch(GameSettingsPatch(randomiseImages: v),
+        onFail: () => setState(() => _randomise = prev));
   }
 
   void _setDifficulty(String value) {
     if (value == _difficulty) return;
     final prev = _difficulty;
     setState(() => _difficulty = value);
-    _patch(GameSettingsPatch(difficulty: value), onFail: () => setState(() => _difficulty = prev));
+    _patch(GameSettingsPatch(difficulty: value),
+        onFail: () => setState(() => _difficulty = prev));
   }
 
   Future<void> _editMaxCoins() async {
@@ -178,10 +183,15 @@ class _GameDetailPageState extends State<GameDetailPage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline_rounded, color: AppColors.statusRed, size: 32),
+          const Icon(Icons.error_outline_rounded,
+              color: AppColors.statusRed, size: 32),
           const SizedBox(height: 10),
-          Text(_error is ApiException ? (_error as ApiException).message : 'Could not load game',
-              style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+          Text(
+              _error is ApiException
+                  ? (_error as ApiException).message
+                  : 'Could not load game',
+              style: GoogleFonts.inter(
+                  fontSize: 13, color: AppColors.textSecondary)),
           const SizedBox(height: 14),
           OutlinedButton.icon(
             onPressed: _load,
@@ -203,23 +213,29 @@ class _GameDetailPageState extends State<GameDetailPage> {
           children: [
             IconButton(
               onPressed: () => context.go('/games'),
-              icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+              icon: const Icon(Icons.arrow_back_rounded,
+                  color: AppColors.textPrimary),
               tooltip: 'Back to games',
               visualDensity: VisualDensity.compact,
             ),
             const SizedBox(width: 4),
             Text('Games',
                 style: GoogleFonts.inter(
-                    fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
             const Spacer(),
             if (_saving)
               const Padding(
                 padding: EdgeInsets.only(right: 12),
                 child: SizedBox(
-                    width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2)),
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2)),
               ),
             Text('Maintenance',
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
             const SizedBox(width: 8),
             Switch(
               value: _maintenance,
@@ -245,16 +261,20 @@ class _GameDetailPageState extends State<GameDetailPage> {
               ),
               child: Center(
                   child: _icons.containsKey(widget.gameKey)
-                      ? Image.asset(_icons[widget.gameKey]!, width: 26, height: 26)
+                      ? Image.asset(_icons[widget.gameKey]!,
+                          width: 26, height: 26)
                       : const Text('🎮', style: TextStyle(fontSize: 26))),
             ),
             const SizedBox(width: 12),
             Text(s.name,
                 style: GoogleFonts.inter(
-                    fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
             const SizedBox(width: 24),
             Text('Max coins',
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
             const SizedBox(width: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -264,13 +284,16 @@ class _GameDetailPageState extends State<GameDetailPage> {
               ),
               child: Text(Format.number(_maxCoins),
                   style: GoogleFonts.inter(
-                      fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white)),
             ),
             const SizedBox(width: 6),
             TextButton(
               onPressed: _saving ? null : _editMaxCoins,
               child: Text('Edit',
-                  style: GoogleFonts.inter(fontSize: 13, color: AppColors.primary)),
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.primary)),
             ),
           ],
         ),
@@ -339,7 +362,8 @@ class _GameDetailPageState extends State<GameDetailPage> {
     }
     if (s.isTrivia) return const _TriviaPanel();
     if (s.isXoxo) {
-      return _XoxoPanel(difficulty: _difficulty, saving: _saving, onChanged: _setDifficulty);
+      return _XoxoPanel(
+          difficulty: _difficulty, saving: _saving, onChanged: _setDifficulty);
     }
     return const SizedBox();
   }
@@ -380,7 +404,8 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
   }
 
   Future<void> _upload() async {
-    final picked = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+    final picked = await FilePicker.platform
+        .pickFiles(type: FileType.image, withData: true);
     if (picked == null || picked.files.isEmpty) return;
     final file = picked.files.first;
     final bytes = file.bytes;
@@ -464,10 +489,12 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
                           const SizedBox(height: 12),
                           Text('Click to choose an image',
                               style: GoogleFonts.inter(
-                                  fontSize: 14, color: AppColors.textSecondary)),
+                                  fontSize: 14,
+                                  color: AppColors.textSecondary)),
                           const SizedBox(height: 4),
                           Text('PNG or JPG',
-                              style: GoogleFonts.inter(fontSize: 11, color: AppColors.textMuted)),
+                              style: GoogleFonts.inter(
+                                  fontSize: 11, color: AppColors.textMuted)),
                         ],
                       ),
                     ),
@@ -481,17 +508,21 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.textPrimary,
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                       elevation: 0,
                     ),
                     child: _uploading
                         ? const SizedBox(
                             width: 18,
                             height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2.5, color: Colors.white))
                         : Text('Upload image',
                             style: GoogleFonts.inter(
-                                fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white)),
                   ),
                 ),
               ],
@@ -518,27 +549,32 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
                       scale: 0.8,
                       child: Switch(
                         value: widget.randomise,
-                        onChanged: widget.saving ? null : widget.onRandomiseChanged,
+                        onChanged:
+                            widget.saving ? null : widget.onRandomiseChanged,
                         activeThumbColor: AppColors.primary,
                       ),
                     ),
                     Text('Randomise images',
-                        style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                        style: GoogleFonts.inter(
+                            fontSize: 13, color: AppColors.textSecondary)),
                     const Spacer(),
                     Text('${Format.number(_total)} images',
-                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                        style: GoogleFonts.inter(
+                            fontSize: 12, color: AppColors.textSecondary)),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Expanded(
                   child: _images.isEmpty
                       ? Center(
-                          child: Text('No images yet — upload one to get started',
-                              style:
-                                  GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted)),
+                          child: Text(
+                              'No images yet — upload one to get started',
+                              style: GoogleFonts.inter(
+                                  fontSize: 13, color: AppColors.textMuted)),
                         )
                       : GridView.builder(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 4,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10,
@@ -577,7 +613,8 @@ class _PuzzleTile extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
               color: AppColors.pageBg,
-              child: const Icon(Icons.broken_image_outlined, color: AppColors.textMuted),
+              child: const Icon(Icons.broken_image_outlined,
+                  color: AppColors.textMuted),
             ),
             loadingBuilder: (context, child, progress) {
               if (progress == null) return child;
@@ -585,7 +622,9 @@ class _PuzzleTile extends StatelessWidget {
                 color: AppColors.pageBg,
                 child: const Center(
                     child: SizedBox(
-                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))),
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2))),
               );
             },
           ),
@@ -603,7 +642,8 @@ class _PuzzleTile extends StatelessWidget {
                 onTap: onDelete,
                 child: const Padding(
                   padding: EdgeInsets.all(5),
-                  child: Icon(Icons.delete_outline, size: 16, color: AppColors.textSecondary),
+                  child: Icon(Icons.delete_outline,
+                      size: 16, color: AppColors.textSecondary),
                 ),
               ),
             ),
@@ -649,7 +689,7 @@ class _TriviaPanelState extends State<_TriviaPanel> {
     'Nigerian Affairs',
     'Science',
   ];
-  
+
   final _importCategory = TextEditingController(text: _triviaCategories.first);
   final _filterCategory = TextEditingController(text: _triviaCategories.first);
 
@@ -663,7 +703,8 @@ class _TriviaPanelState extends State<_TriviaPanel> {
         isDense: true,
         filled: true,
         fillColor: AppColors.pageBg,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.divider),
@@ -692,7 +733,8 @@ class _TriviaPanelState extends State<_TriviaPanel> {
   }
 
   void _load() {
-    _future = gamesRepository.listTrivia(category: _filter, page: _page, limit: _limit);
+    _future = gamesRepository.listTrivia(
+        category: _filter, page: _page, limit: _limit);
   }
 
   void _reload() => setState(_load);
@@ -802,10 +844,13 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                   children: [
                     Text('Import questions',
                         style: GoogleFonts.inter(
-                            fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary)),
                     const SizedBox(height: 4),
                     Text('Upload a CSV of questions for a category.',
-                        style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                        style: GoogleFonts.inter(
+                            fontSize: 12, color: AppColors.textSecondary)),
                   ],
                 ),
               ),
@@ -814,10 +859,13 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                   downloadText(_triviaTemplateCsv, 'trivia_template.csv');
                 },
                 icon: const Icon(Icons.download_rounded, size: 16),
-                label: Text('Download Template', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+                label: Text('Download Template',
+                    style: GoogleFonts.inter(
+                        fontSize: 13, fontWeight: FontWeight.w600)),
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
               ),
             ],
@@ -833,8 +881,12 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(_pickedFile == null ? Icons.upload_file_outlined : Icons.description_outlined,
-                        size: 40, color: AppColors.primary),
+                    Icon(
+                        _pickedFile == null
+                            ? Icons.upload_file_outlined
+                            : Icons.description_outlined,
+                        size: 40,
+                        color: AppColors.primary),
                     const SizedBox(height: 10),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -843,7 +895,8 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary),
+                        style: GoogleFonts.inter(
+                            fontSize: 13, color: AppColors.textSecondary),
                       ),
                     ),
                   ],
@@ -854,13 +907,17 @@ class _TriviaPanelState extends State<_TriviaPanel> {
           const SizedBox(height: 14),
           Text('Category',
               style: GoogleFonts.inter(
-                  fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
           const SizedBox(height: 6),
           DropdownMenu<String>(
             controller: _importCategory,
             initialSelection: _importCategory.text,
             expandedInsets: EdgeInsets.zero,
-            dropdownMenuEntries: _triviaCategories.map((c) => DropdownMenuEntry(value: c, label: c)).toList(),
+            dropdownMenuEntries: _triviaCategories
+                .map((c) => DropdownMenuEntry(value: c, label: c))
+                .toList(),
             textStyle: GoogleFonts.inter(fontSize: 13),
             inputDecorationTheme: _dropdownTheme(),
           ),
@@ -872,17 +929,21 @@ class _TriviaPanelState extends State<_TriviaPanel> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.textPrimary,
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 elevation: 0,
               ),
               child: _importing
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.5, color: Colors.white))
                   : Text('Import CSV',
                       style: GoogleFonts.inter(
-                          fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
             ),
           ),
         ],
@@ -910,8 +971,11 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                     controller: _filterCategory,
                     initialSelection: _filterCategory.text,
                     expandedInsets: EdgeInsets.zero,
-                    leadingIcon: const Icon(Icons.search, size: 18, color: AppColors.textMuted),
-                    dropdownMenuEntries: _triviaCategories.map((c) => DropdownMenuEntry(value: c, label: c)).toList(),
+                    leadingIcon: const Icon(Icons.search,
+                        size: 18, color: AppColors.textMuted),
+                    dropdownMenuEntries: _triviaCategories
+                        .map((c) => DropdownMenuEntry(value: c, label: c))
+                        .toList(),
                     textStyle: GoogleFonts.inter(fontSize: 13),
                     inputDecorationTheme: _dropdownTheme(),
                     onSelected: (v) {
@@ -933,7 +997,8 @@ class _TriviaPanelState extends State<_TriviaPanel> {
               future: _future,
               builder: (context, snap) {
                 if (snap.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(strokeWidth: 3));
+                  return const Center(
+                      child: CircularProgressIndicator(strokeWidth: 3));
                 }
                 if (snap.hasError) {
                   return Center(
@@ -944,10 +1009,12 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                           snap.error is ApiException
                               ? (snap.error as ApiException).message
                               : 'Could not load questions',
-                          style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary),
+                          style: GoogleFonts.inter(
+                              fontSize: 13, color: AppColors.textSecondary),
                         ),
                         const SizedBox(height: 10),
-                        OutlinedButton(onPressed: _reload, child: const Text('Retry')),
+                        OutlinedButton(
+                            onPressed: _reload, child: const Text('Retry')),
                       ],
                     ),
                   );
@@ -956,7 +1023,8 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                 if (data == null || data.items.isEmpty) {
                   return Center(
                     child: Text('No questions found',
-                        style: GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted)),
+                        style: GoogleFonts.inter(
+                            fontSize: 13, color: AppColors.textMuted)),
                   );
                 }
                 return Column(
@@ -1007,17 +1075,22 @@ class _QuestionTile extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  if (q.category.isNotEmpty) _chip(q.category, AppColors.primaryLight, AppColors.primary),
+                  if (q.category.isNotEmpty)
+                    _chip(
+                        q.category, AppColors.primaryLight, AppColors.primary),
                   if (q.difficulty.isNotEmpty) ...[
                     const SizedBox(width: 6),
-                    _chip(q.difficulty, AppColors.pageBg, AppColors.textSecondary),
+                    _chip(q.difficulty, AppColors.pageBg,
+                        AppColors.textSecondary),
                   ],
                 ],
               ),
               const SizedBox(height: 6),
               Text(q.prompt,
                   style: GoogleFonts.inter(
-                      fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary)),
               const SizedBox(height: 6),
               ...List.generate(q.options.length, (i) {
                 final correct = i == q.answerIndex;
@@ -1028,15 +1101,21 @@ class _QuestionTile extends StatelessWidget {
                       Icon(
                         correct ? Icons.check_circle : Icons.circle_outlined,
                         size: 14,
-                        color: correct ? AppColors.statusGreen : AppColors.textMuted,
+                        color: correct
+                            ? AppColors.statusGreen
+                            : AppColors.textMuted,
                       ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(q.options[i],
                             style: GoogleFonts.inter(
                                 fontSize: 12,
-                                color: correct ? AppColors.textPrimary : AppColors.textSecondary,
-                                fontWeight: correct ? FontWeight.w600 : FontWeight.w400)),
+                                color: correct
+                                    ? AppColors.textPrimary
+                                    : AppColors.textSecondary,
+                                fontWeight: correct
+                                    ? FontWeight.w600
+                                    : FontWeight.w400)),
                       ),
                     ],
                   ),
@@ -1047,7 +1126,8 @@ class _QuestionTile extends StatelessWidget {
         ),
         IconButton(
           onPressed: onDelete,
-          icon: const Icon(Icons.delete_outline, size: 18, color: AppColors.textSecondary),
+          icon: const Icon(Icons.delete_outline,
+              size: 18, color: AppColors.textSecondary),
           tooltip: 'Delete',
           visualDensity: VisualDensity.compact,
         ),
@@ -1058,9 +1138,11 @@ class _QuestionTile extends StatelessWidget {
   Widget _chip(String text, Color bg, Color fg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
       child: Text(text,
-          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w600, color: fg)),
+          style: GoogleFonts.inter(
+              fontSize: 10, fontWeight: FontWeight.w600, color: fg)),
     );
   }
 }
@@ -1071,7 +1153,10 @@ class _XoxoPanel extends StatelessWidget {
   final bool saving;
   final ValueChanged<String> onChanged;
 
-  const _XoxoPanel({required this.difficulty, required this.saving, required this.onChanged});
+  const _XoxoPanel(
+      {required this.difficulty,
+      required this.saving,
+      required this.onChanged});
 
   static const _options = [
     ('simple', 'Simple'),
@@ -1097,10 +1182,13 @@ class _XoxoPanel extends StatelessWidget {
           children: [
             Text('Choose difficulty',
                 style: GoogleFonts.inter(
-                    fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
             const SizedBox(height: 4),
             Text('Sets the AI strength for new XOXO matches.',
-                style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textSecondary)),
             const SizedBox(height: 16),
             Wrap(
               spacing: 10,
@@ -1111,9 +1199,11 @@ class _XoxoPanel extends StatelessWidget {
                   onTap: saving ? null : () => onChanged(o.$1),
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 12),
                     decoration: BoxDecoration(
-                      color: selected ? AppColors.primaryLight : AppColors.cardBg,
+                      color:
+                          selected ? AppColors.primaryLight : AppColors.cardBg,
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: selected ? AppColors.primary : AppColors.divider,
@@ -1124,16 +1214,22 @@ class _XoxoPanel extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                          selected
+                              ? Icons.radio_button_checked
+                              : Icons.radio_button_unchecked,
                           size: 18,
-                          color: selected ? AppColors.primary : AppColors.textMuted,
+                          color: selected
+                              ? AppColors.primary
+                              : AppColors.textMuted,
                         ),
                         const SizedBox(width: 8),
                         Text(o.$2,
                             style: GoogleFonts.inter(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: selected ? AppColors.primary : AppColors.textPrimary)),
+                                color: selected
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary)),
                       ],
                     ),
                   ),
@@ -1162,7 +1258,8 @@ Future<String?> promptForText(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(title, style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700)),
+      title: Text(title,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700)),
       content: TextField(
         controller: controller,
         autofocus: true,
@@ -1171,7 +1268,8 @@ Future<String?> promptForText(
         onSubmitted: (v) => Navigator.pop(ctx, v),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+        TextButton(
+            onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, controller.text),
           style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
@@ -1194,14 +1292,20 @@ Future<bool?> showConfirmDialog(
     context: context,
     builder: (ctx) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text(title, style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700)),
-      content: Text(message, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+      title: Text(title,
+          style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700)),
+      content: Text(message,
+          style:
+              GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+        TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel')),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: FilledButton.styleFrom(
-              backgroundColor: destructive ? AppColors.statusRed : AppColors.primary),
+              backgroundColor:
+                  destructive ? AppColors.statusRed : AppColors.primary),
           child: Text(confirmLabel),
         ),
       ],
@@ -1241,13 +1345,16 @@ class _DashedBorderPainter extends CustomPainter {
     const dashSpace = 4.0;
     const radius = Radius.circular(12);
 
-    final path = Path()..addRRect(RRect.fromLTRBR(0, 0, size.width, size.height, radius));
+    final path = Path()
+      ..addRRect(RRect.fromLTRBR(0, 0, size.width, size.height, radius));
     for (final metric in path.computeMetrics()) {
       double distance = 0;
       while (distance < metric.length) {
         final next = distance + dashWidth;
         canvas.drawPath(
-            metric.extractPath(distance, next < metric.length ? next : metric.length), paint);
+            metric.extractPath(
+                distance, next < metric.length ? next : metric.length),
+            paint);
         distance += dashWidth + dashSpace;
       }
     }
@@ -1257,7 +1364,8 @@ class _DashedBorderPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-const String _triviaTemplateCsv = '''prompt,option_1,option_2,option_3,option_4,answer
+const String _triviaTemplateCsv =
+    '''prompt,option_1,option_2,option_3,option_4,answer
 Who was Nigeria's first President?,Nnamdi Azikiwe,Tafawa Balewa,Yakubu Gowon,Shehu Shagari,1
 In what year did Nigeria become a republic?,1960,1963,1966,1979,2
 Which colonial power ruled Nigeria before independence?,France,Portugal,Britain,Germany,3

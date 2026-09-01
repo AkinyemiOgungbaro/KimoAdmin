@@ -47,8 +47,8 @@ class _TournamentsPageState extends State<TournamentsPage>
   }
 
   void _loadLeaderboard() {
-    _leaderboardFuture =
-        tournamentsRepository.leaderboard(page: _leaderboardPage, limit: _leaderboardLimit);
+    _leaderboardFuture = tournamentsRepository.leaderboard(
+        page: _leaderboardPage, limit: _leaderboardLimit);
   }
 
   void _reload() {
@@ -57,7 +57,8 @@ class _TournamentsPageState extends State<TournamentsPage>
 
   void _toast(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _create() async {
@@ -88,7 +89,8 @@ class _TournamentsPageState extends State<TournamentsPage>
     final confirm = await _confirmDialog(
       context,
       title: 'Cancel tournament?',
-      message: '"${t.name}" will be moved to Canceled. Registered players will be refunded per '
+      message:
+          '"${t.name}" will be moved to Canceled. Registered players will be refunded per '
           'the backend rules.',
       confirmLabel: 'Cancel tournament',
       destructive: true,
@@ -121,7 +123,8 @@ class _TournamentsPageState extends State<TournamentsPage>
     showDialog(
       context: context,
       barrierColor: Colors.black54,
-      builder: (_) => _PlayersDialog(tournamentId: t.id, tournamentName: t.name),
+      builder: (_) =>
+          _PlayersDialog(tournamentId: t.id, tournamentName: t.name),
     );
   }
 
@@ -136,7 +139,9 @@ class _TournamentsPageState extends State<TournamentsPage>
           children: [
             Text('Tournaments',
                 style: GoogleFonts.inter(
-                    fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -150,14 +155,19 @@ class _TournamentsPageState extends State<TournamentsPage>
                 ),
                 ElevatedButton.icon(
                   onPressed: _create,
-                  icon: const Icon(Icons.add_rounded, size: 18, color: Colors.white),
+                  icon: const Icon(Icons.add_rounded,
+                      size: 18, color: Colors.white),
                   label: Text('Create Tournament',
                       style: GoogleFonts.inter(
-                          fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     elevation: 0,
                   ),
                 ),
@@ -184,7 +194,8 @@ class _TournamentsPageState extends State<TournamentsPage>
   }
 
   // ── Status tabs ────────────────────────────────────────────────────────────
-  Widget _statusTab(Set<String> statuses, Widget Function(TournamentItem) card) {
+  Widget _statusTab(
+      Set<String> statuses, Widget Function(TournamentItem) card) {
     return AsyncView<TournamentsPageData>(
       key: ValueKey(_listFuture),
       future: _listFuture,
@@ -231,7 +242,8 @@ class _TournamentsPageState extends State<TournamentsPage>
         _col('Prize Pool', Format.naira(t.prizePoolKobo)),
         _col('Participating', _participants(t)),
         _col('Time Remaining', Format.remaining(t.secondsRemaining),
-            labelColor: AppColors.statusGreen, valueColor: AppColors.textPrimary),
+            labelColor: AppColors.statusGreen,
+            valueColor: AppColors.textPrimary),
       ],
       trailing: PopupMenuButton<String>(
         icon: const Icon(Icons.more_horiz, color: AppColors.textSecondary),
@@ -258,10 +270,12 @@ class _TournamentsPageState extends State<TournamentsPage>
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           elevation: 0,
         ),
-        child: Text('View List', style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
+        child: Text('View List',
+            style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
       ),
     );
   }
@@ -279,9 +293,11 @@ class _TournamentsPageState extends State<TournamentsPage>
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        child: Text('Restore', style: GoogleFonts.inter(fontSize: 13, color: AppColors.primary)),
+        child: Text('Restore',
+            style: GoogleFonts.inter(fontSize: 13, color: AppColors.primary)),
       ),
     );
   }
@@ -305,7 +321,9 @@ class _TournamentsPageState extends State<TournamentsPage>
                 padding: const EdgeInsets.only(top: 4, bottom: 12),
                 child: Text(data.tournamentName!,
                     style: GoogleFonts.inter(
-                        fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary)),
               ),
             ],
             const _LeaderboardHeaderRow(),
@@ -342,9 +360,11 @@ class _TournamentsPageState extends State<TournamentsPage>
       ? '${Format.number(t.participants)}/${Format.number(t.participantLimit)}'
       : Format.number(t.participants);
 
-  PopupMenuItem<String> _menuItem(String value, String label, Color color) => PopupMenuItem(
+  PopupMenuItem<String> _menuItem(String value, String label, Color color) =>
+      PopupMenuItem(
         value: value,
-        child: Text(label, style: GoogleFonts.inter(fontSize: 13, color: color)),
+        child:
+            Text(label, style: GoogleFonts.inter(fontSize: 13, color: color)),
       );
 
   Widget _entryCodeCol(TournamentItem t) {
@@ -355,26 +375,32 @@ class _TournamentsPageState extends State<TournamentsPage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Entry Code',
-              style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+              style: GoogleFonts.inter(
+                  fontSize: 12, color: AppColors.textSecondary)),
           const SizedBox(height: 4),
           if (code == null || code.isEmpty)
             Text('Nil',
                 style: GoogleFonts.inter(
-                    fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textSecondary))
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary))
           else
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(code,
                     style: GoogleFonts.inter(
-                        fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary)),
                 const SizedBox(width: 6),
                 InkWell(
                   onTap: () {
                     Clipboard.setData(ClipboardData(text: code));
                     _toast('Entry code copied');
                   },
-                  child: const Icon(Icons.copy_outlined, size: 15, color: AppColors.textMuted),
+                  child: const Icon(Icons.copy_outlined,
+                      size: 15, color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -389,7 +415,8 @@ class _TournamentCard extends StatelessWidget {
   final TournamentItem t;
   final List<Widget> columns;
   final Widget trailing;
-  const _TournamentCard({required this.t, required this.columns, required this.trailing});
+  const _TournamentCard(
+      {required this.t, required this.columns, required this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -410,10 +437,13 @@ class _TournamentCard extends StatelessWidget {
               children: [
                 Text(t.name,
                     style: GoogleFonts.inter(
-                        fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary)),
                 const SizedBox(height: 4),
                 Text('Starts : ${Format.dateTime(t.startsAt)}',
-                    style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary)),
+                    style: GoogleFonts.inter(
+                        fontSize: 12, color: AppColors.textSecondary)),
               ],
             ),
           ),
@@ -425,7 +455,8 @@ class _TournamentCard extends StatelessWidget {
   }
 }
 
-Widget _col(String label, String value, {Color? labelColor, Color? valueColor}) {
+Widget _col(String label, String value,
+    {Color? labelColor, Color? valueColor}) {
   return Expanded(
     flex: 2,
     child: Column(
@@ -434,7 +465,8 @@ Widget _col(String label, String value, {Color? labelColor, Color? valueColor}) 
         Text(label,
             style: GoogleFonts.inter(
                 fontSize: 12,
-                fontWeight: labelColor != null ? FontWeight.w600 : FontWeight.w400,
+                fontWeight:
+                    labelColor != null ? FontWeight.w600 : FontWeight.w400,
                 color: labelColor ?? AppColors.textSecondary)),
         const SizedBox(height: 4),
         Text(value,
@@ -457,7 +489,9 @@ class _LeaderboardHeaderRow extends StatelessWidget {
           flex: flex,
           child: Text(t,
               style: GoogleFonts.inter(
-                  fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary)),
         );
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
@@ -465,7 +499,13 @@ class _LeaderboardHeaderRow extends StatelessWidget {
         border: Border(bottom: BorderSide(color: AppColors.divider)),
       ),
       child: Row(
-        children: [h('#', 1), h('Player', 5), h('Points', 2), h('Games', 2), h('Last Scored', 3)],
+        children: [
+          h('#', 1),
+          h('Player', 5),
+          h('Points', 2),
+          h('Games', 2),
+          h('Last Scored', 3)
+        ],
       ),
     );
   }
@@ -485,7 +525,9 @@ class _LeaderboardRow extends StatelessWidget {
             flex: 1,
             child: Text('${entry.rank}',
                 style: GoogleFonts.inter(
-                    fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary)),
           ),
           Expanded(
             flex: 5,
@@ -494,28 +536,36 @@ class _LeaderboardRow extends StatelessWidget {
               children: [
                 Text(entry.username,
                     style: GoogleFonts.inter(
-                        fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary)),
                 if (entry.email != null && entry.email!.isNotEmpty)
                   Text(entry.email!,
-                      style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.textMuted)),
+                      style: GoogleFonts.inter(
+                          fontSize: 11.5, color: AppColors.textMuted)),
               ],
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(Format.number(entry.points),
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textPrimary)),
           ),
           Expanded(
             flex: 2,
             child: Text(Format.number(entry.gamesScored),
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textPrimary)),
           ),
           Expanded(
             flex: 3,
             child: Text(
-                entry.lastScoredAt == null ? '—' : Format.relativeTime(entry.lastScoredAt),
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                entry.lastScoredAt == null
+                    ? '—'
+                    : Format.relativeTime(entry.lastScoredAt),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
         ],
       ),
@@ -527,7 +577,8 @@ class _LeaderboardRow extends StatelessWidget {
 class _PlayersDialog extends StatefulWidget {
   final String tournamentId;
   final String tournamentName;
-  const _PlayersDialog({required this.tournamentId, required this.tournamentName});
+  const _PlayersDialog(
+      {required this.tournamentId, required this.tournamentName});
 
   @override
   State<_PlayersDialog> createState() => _PlayersDialogState();
@@ -566,13 +617,16 @@ class _PlayersDialogState extends State<_PlayersDialog> {
                                 fontWeight: FontWeight.w700,
                                 color: AppColors.textPrimary)),
                         Text(widget.tournamentName,
-                            style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.textSecondary)),
+                            style: GoogleFonts.inter(
+                                fontSize: 12.5,
+                                color: AppColors.textSecondary)),
                       ],
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded, size: 20, color: AppColors.textSecondary),
+                    icon: const Icon(Icons.close_rounded,
+                        size: 20, color: AppColors.textSecondary),
                     visualDensity: VisualDensity.compact,
                   ),
                 ],
@@ -582,11 +636,13 @@ class _PlayersDialogState extends State<_PlayersDialog> {
                 child: AsyncView<List<TournamentPlayer>>(
                   future: _future,
                   onRetry: () => setState(() {
-                    _future = tournamentsRepository.players(widget.tournamentId);
+                    _future =
+                        tournamentsRepository.players(widget.tournamentId);
                   }),
                   builder: (context, players) {
                     if (players.isEmpty) {
-                      return const _EmptyState(message: 'No players registered yet.');
+                      return const _EmptyState(
+                          message: 'No players registered yet.');
                     }
                     return ListView.separated(
                       shrinkWrap: true,
@@ -622,38 +678,48 @@ class _PlayerRow extends StatelessWidget {
               children: [
                 Text(player.username,
                     style: GoogleFonts.inter(
-                        fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textPrimary)),
                 if (player.email != null && player.email!.isNotEmpty)
                   Text(player.email!,
-                      style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.textMuted)),
+                      style: GoogleFonts.inter(
+                          fontSize: 11.5, color: AppColors.textMuted)),
               ],
             ),
           ),
           Expanded(
             flex: 2,
             child: Text('${Format.number(player.points)} pts',
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textPrimary)),
           ),
           Expanded(
             flex: 2,
             child: Text('${Format.number(player.gamesScored)} games',
-                style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,
             child: Align(
               alignment: Alignment.centerRight,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: player.entryFeePaid ? AppColors.statusGreenBg : AppColors.statusOrangeBg,
+                  color: player.entryFeePaid
+                      ? AppColors.statusGreenBg
+                      : AppColors.statusOrangeBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(player.entryFeePaid ? 'Paid' : 'Unpaid',
                     style: GoogleFonts.inter(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w500,
-                        color: player.entryFeePaid ? AppColors.statusGreen : AppColors.statusOrange)),
+                        color: player.entryFeePaid
+                            ? AppColors.statusGreen
+                            : AppColors.statusOrange)),
               ),
             ),
           ),
@@ -671,7 +737,9 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(message, style: GoogleFonts.inter(fontSize: 15, color: AppColors.textSecondary)),
+      child: Text(message,
+          style:
+              GoogleFonts.inter(fontSize: 15, color: AppColors.textSecondary)),
     );
   }
 }
@@ -689,16 +757,19 @@ Future<bool?> _confirmDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: Text(title,
           style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w700)),
-      content: Text(message, style: GoogleFonts.inter(fontSize: 13.5, height: 1.5)),
+      content:
+          Text(message, style: GoogleFonts.inter(fontSize: 13.5, height: 1.5)),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx, false),
-          child: Text('Never mind', style: GoogleFonts.inter(color: AppColors.textSecondary)),
+          child: Text('Never mind',
+              style: GoogleFonts.inter(color: AppColors.textSecondary)),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(ctx, true),
           style: FilledButton.styleFrom(
-            backgroundColor: destructive ? AppColors.statusRed : AppColors.primary,
+            backgroundColor:
+                destructive ? AppColors.statusRed : AppColors.primary,
           ),
           child: Text(confirmLabel),
         ),

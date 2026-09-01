@@ -47,8 +47,12 @@ class BannerItem {
       format: json['format'] ?? '',
       sizeMismatch: json['size_mismatch'] == true,
       status: json['status'] ?? 'inactive',
-      startsAt: json['starts_at'] != null ? DateTime.parse(json['starts_at']).toLocal() : null,
-      endsAt: json['ends_at'] != null ? DateTime.parse(json['ends_at']).toLocal() : null,
+      startsAt: json['starts_at'] != null
+          ? DateTime.parse(json['starts_at']).toLocal()
+          : null,
+      endsAt: json['ends_at'] != null
+          ? DateTime.parse(json['ends_at']).toLocal()
+          : null,
       impressions: json['impressions'] ?? 0,
       clicks: json['clicks'] ?? 0,
       ctr: json['ctr'] ?? 0,
@@ -72,7 +76,10 @@ class BannersPageData {
 
   factory BannersPageData.fromJson(Map<String, dynamic> json) {
     return BannersPageData(
-      items: (json['items'] as List?)?.map((x) => BannerItem.fromJson(x)).toList() ?? [],
+      items: (json['items'] as List?)
+              ?.map((x) => BannerItem.fromJson(x))
+              .toList() ??
+          [],
       total: json['total'] ?? 0,
       page: json['page'] ?? 1,
       limit: json['limit'] ?? 20,
@@ -110,7 +117,10 @@ class PlacementsData {
 
   factory PlacementsData.fromJson(Map<String, dynamic> json) {
     return PlacementsData(
-      items: (json['items'] as List?)?.map((x) => PlacementItem.fromJson(x)).toList() ?? [],
+      items: (json['items'] as List?)
+              ?.map((x) => PlacementItem.fromJson(x))
+              .toList() ??
+          [],
     );
   }
 }

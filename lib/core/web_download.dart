@@ -13,3 +13,18 @@ void downloadText(String text, String filename, {String mime = 'text/csv'}) {
     ..click();
   html.Url.revokeObjectUrl(url);
 }
+
+/// Triggers a browser download of [bytes] as a file named [filename].
+void downloadBytes(List<int> bytes, String filename, {String mime = 'application/pdf'}) {
+  final blob = html.Blob([bytes], mime);
+  final url = html.Url.createObjectUrlFromBlob(blob);
+  html.AnchorElement(href: url)
+    ..download = filename
+    ..click();
+  html.Url.revokeObjectUrl(url);
+}
+
+/// Opens a URL in a new tab.
+void openUrl(String url) {
+  html.window.open(url, '_blank');
+}

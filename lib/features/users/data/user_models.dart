@@ -62,14 +62,18 @@ class UsersPageData {
     required this.limit,
   });
 
-  int get pageCount => limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
+  int get pageCount =>
+      limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
 
   factory UsersPageData.fromJson(Map<String, dynamic> j) => UsersPageData(
         items: ((j['items'] as List?) ?? const [])
-            .map((e) => UserListItem.fromJson((e as Map).cast<String, dynamic>()))
+            .map((e) =>
+                UserListItem.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
         total: (j['total'] as num?)?.toInt() ?? 0,
-        totalUsers: (j['total_users'] as num?)?.toInt() ?? (j['total'] as num?)?.toInt() ?? 0,
+        totalUsers: (j['total_users'] as num?)?.toInt() ??
+            (j['total'] as num?)?.toInt() ??
+            0,
         page: (j['page'] as num?)?.toInt() ?? 1,
         limit: (j['limit'] as num?)?.toInt() ?? 10,
       );

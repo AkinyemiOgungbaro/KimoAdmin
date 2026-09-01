@@ -34,7 +34,8 @@ class GamesBarChart extends StatelessWidget {
           show: true,
           drawVerticalLine: false,
           horizontalInterval: maxY / 4,
-          getDrawingHorizontalLine: (v) => const FlLine(color: AppColors.divider, strokeWidth: 1),
+          getDrawingHorizontalLine: (v) =>
+              const FlLine(color: AppColors.divider, strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
           leftTitles: AxisTitles(
@@ -44,7 +45,8 @@ class GamesBarChart extends StatelessWidget {
               interval: maxY / 4,
               getTitlesWidget: (val, meta) => Text(
                 Format.compact(val),
-                style: GoogleFonts.inter(fontSize: 10, color: AppColors.textSecondary),
+                style: GoogleFonts.inter(
+                    fontSize: 10, color: AppColors.textSecondary),
               ),
             ),
           ),
@@ -60,14 +62,17 @@ class GamesBarChart extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 4),
                   child: Text(
                     shortDayLabel(labels[idx]),
-                    style: GoogleFonts.inter(fontSize: 10, color: AppColors.textSecondary),
+                    style: GoogleFonts.inter(
+                        fontSize: 10, color: AppColors.textSecondary),
                   ),
                 );
               },
             ),
           ),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          topTitles:
+              const AxisTitles(sideTitles: SideTitles(showTitles: false)),
         ),
         borderData: FlBorderData(show: false),
         barGroups: data.asMap().entries.map((e) {
@@ -78,7 +83,8 @@ class GamesBarChart extends StatelessWidget {
                 toY: e.value,
                 color: AppColors.chartBar,
                 width: barWidth,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(4)),
               ),
             ],
           );

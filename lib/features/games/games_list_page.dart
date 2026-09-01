@@ -61,7 +61,9 @@ class _GamesListPageState extends State<GamesListPage> {
               children: [
                 Text('Games',
                     style: GoogleFonts.inter(
-                        fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary)),
                 const Spacer(),
                 RangeDropdown(value: _period, onChanged: _onPeriod),
               ],
@@ -108,7 +110,8 @@ class _GamesListPageState extends State<GamesListPage> {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 48),
               child: Text('No games available',
-                  style: GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted)),
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.textMuted)),
             )
           else
             ListView.separated(
@@ -136,7 +139,9 @@ class _GamesListPageState extends State<GamesListPage> {
       flex: flex,
       child: Text(text,
           style: GoogleFonts.inter(
-              fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary)),
     );
   }
 }
@@ -182,13 +187,16 @@ class _GameRowState extends State<_GameRow> {
                       child: Center(
                         child: widget.icon.startsWith('assets/')
                             ? Image.asset(widget.icon, width: 24, height: 24)
-                            : Text(widget.icon, style: const TextStyle(fontSize: 24)),
+                            : Text(widget.icon,
+                                style: const TextStyle(fontSize: 24)),
                       ),
                     ),
                     const SizedBox(width: 14),
                     Text(g.name,
                         style: GoogleFonts.inter(
-                            fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textPrimary)),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textPrimary)),
                   ],
                 ),
               ),
@@ -200,7 +208,8 @@ class _GameRowState extends State<_GameRow> {
                 flex: 2,
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: StatusBadge(status: g.maintenance ? 'maintenance' : g.status),
+                  child: StatusBadge(
+                      status: g.maintenance ? 'maintenance' : g.status),
                 ),
               ),
             ],
@@ -213,7 +222,9 @@ class _GameRowState extends State<_GameRow> {
   Widget _cell(String text, {required int flex}) {
     return Expanded(
       flex: flex,
-      child: Text(text, style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
+      child: Text(text,
+          style:
+              GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
     );
   }
 }

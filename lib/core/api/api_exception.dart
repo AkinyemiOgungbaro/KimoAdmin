@@ -16,7 +16,8 @@ class ApiException implements Exception {
       if (data is Map && data['message'] is String) {
         msg = data['message'] as String;
       }
-      return ApiException(msg ?? _statusMessage(res.statusCode), statusCode: res.statusCode);
+      return ApiException(msg ?? _statusMessage(res.statusCode),
+          statusCode: res.statusCode);
     }
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
@@ -24,7 +25,8 @@ class ApiException implements Exception {
       case DioExceptionType.receiveTimeout:
         return ApiException('The request timed out. Please try again.');
       case DioExceptionType.connectionError:
-        return ApiException('Cannot reach the server. Check your connection and that the API is running.');
+        return ApiException(
+            'Cannot reach the server. Check your connection and that the API is running.');
       case DioExceptionType.cancel:
         return ApiException('Request cancelled.');
       default:

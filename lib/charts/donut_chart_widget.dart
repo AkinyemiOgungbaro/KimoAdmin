@@ -8,7 +8,8 @@ class CoinsDonutChart extends StatelessWidget {
   final double earned;
   final double redeemed;
 
-  const CoinsDonutChart({super.key, required this.earned, required this.redeemed});
+  const CoinsDonutChart(
+      {super.key, required this.earned, required this.redeemed});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +69,8 @@ class CoinsDonutChart extends StatelessWidget {
                   ),
                   Text(
                     'Total coins',
-                    style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary),
+                    style: GoogleFonts.inter(
+                        fontSize: 11, color: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -106,20 +108,30 @@ class _LegendItem extends StatelessWidget {
   final String label;
   final String value;
 
-  const _LegendItem({required this.color, required this.label, required this.value});
+  const _LegendItem(
+      {required this.color, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
         const SizedBox(width: 6),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: GoogleFonts.inter(fontSize: 11, color: AppColors.textSecondary)),
-              Text(value, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              Text(label,
+                  style: GoogleFonts.inter(
+                      fontSize: 11, color: AppColors.textSecondary)),
+              Text(value,
+                  style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary)),
             ],
           ),
         ),

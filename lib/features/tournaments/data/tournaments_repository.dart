@@ -6,7 +6,8 @@ class TournamentsRepository {
   TournamentsRepository(this._api);
 
   Future<TournamentsPageData> list({int page = 1, int limit = 50}) async {
-    final data = await _api.get('/admin/tournaments', query: {'page': page, 'limit': limit});
+    final data = await _api
+        .get('/admin/tournaments', query: {'page': page, 'limit': limit});
     return TournamentsPageData.fromJson((data as Map).cast<String, dynamic>());
   }
 
@@ -25,13 +26,14 @@ class TournamentsRepository {
 
   Future<TournamentItem> detail(String id) async {
     final data = await _api.get('/admin/tournaments/$id');
-    final json = (data is Map && data['tournament'] is Map) ? data['tournament'] : data;
+    final json =
+        (data is Map && data['tournament'] is Map) ? data['tournament'] : data;
     return TournamentItem.fromJson((json as Map).cast<String, dynamic>());
   }
 
   Future<List<TournamentPlayer>> players(String id) async {
     final data = await _api.get('/admin/tournaments/$id/players');
-    
+
     List items = [];
     if (data is List) {
       items = data;
@@ -40,7 +42,8 @@ class TournamentsRepository {
     }
 
     return items
-        .map((e) => TournamentPlayer.fromJson((e as Map).cast<String, dynamic>()))
+        .map((e) =>
+            TournamentPlayer.fromJson((e as Map).cast<String, dynamic>()))
         .toList();
   }
 
@@ -52,5 +55,6 @@ class TournamentsRepository {
 
   Future<void> cancel(String id) => _api.delete('/admin/tournaments/$id');
 
-  Future<void> restore(String id) => _api.post('/admin/tournaments/$id/restore');
+  Future<void> restore(String id) =>
+      _api.post('/admin/tournaments/$id/restore');
 }

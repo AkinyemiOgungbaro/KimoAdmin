@@ -37,7 +37,8 @@ class TokenStore {
     }
   }
 
-  Future<void> saveTokens({required String access, required String refresh}) async {
+  Future<void> saveTokens(
+      {required String access, required String refresh}) async {
     await _p.setString(_kAccess, access);
     await _p.setString(_kRefresh, refresh);
   }

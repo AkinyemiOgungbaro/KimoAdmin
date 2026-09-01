@@ -34,7 +34,7 @@ class BannersRepository {
       if (endsAt != null && endsAt.isNotEmpty) 'ends_at': endsAt,
       'file': file,
     });
-    
+
     await _api.post('/admin/banners', data: formData);
   }
 
@@ -55,7 +55,7 @@ class BannersRepository {
       if (endsAt != null && endsAt.isNotEmpty) 'ends_at': endsAt,
       if (file != null) 'file': file,
     });
-    
+
     await _api.patch('/admin/banners/$id', data: formData);
   }
 }

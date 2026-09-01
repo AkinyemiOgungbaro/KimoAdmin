@@ -91,12 +91,16 @@ class _LoginPageState extends State<LoginPage> {
                         TextFormField(
                           controller: _emailCtrl,
                           keyboardType: TextInputType.emailAddress,
-                          autofillHints: const [AutofillHints.username, AutofillHints.email],
+                          autofillHints: const [
+                            AutofillHints.username,
+                            AutofillHints.email
+                          ],
                           decoration: _inputDecoration('you@kimogames.com'),
                           validator: (v) {
                             final value = v?.trim() ?? '';
                             if (value.isEmpty) return 'Enter your email';
-                            if (!value.contains('@')) return 'Enter a valid email';
+                            if (!value.contains('@'))
+                              return 'Enter a valid email';
                             return null;
                           },
                           onFieldSubmitted: (_) => _submit(),
@@ -111,15 +115,19 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: _inputDecoration('••••••••').copyWith(
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                                _obscure
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
                                 size: 20,
                                 color: AppColors.textSecondary,
                               ),
-                              onPressed: () => setState(() => _obscure = !_obscure),
+                              onPressed: () =>
+                                  setState(() => _obscure = !_obscure),
                             ),
                           ),
-                          validator: (v) =>
-                              (v == null || v.isEmpty) ? 'Enter your password' : null,
+                          validator: (v) => (v == null || v.isEmpty)
+                              ? 'Enter your password'
+                              : null,
                           onFieldSubmitted: (_) => _submit(),
                         ),
                         if (_error != null) ...[
@@ -217,7 +225,8 @@ class _LoginPageState extends State<LoginPage> {
         hintStyle: GoogleFonts.inter(fontSize: 14, color: AppColors.textMuted),
         filled: true,
         fillColor: AppColors.pageBg,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.divider),
@@ -246,12 +255,14 @@ class _LoginPageState extends State<LoginPage> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: 18, color: AppColors.statusRed),
+          const Icon(Icons.error_outline_rounded,
+              size: 18, color: AppColors.statusRed),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.statusRed),
+              style:
+                  GoogleFonts.inter(fontSize: 12.5, color: AppColors.statusRed),
             ),
           ),
         ],

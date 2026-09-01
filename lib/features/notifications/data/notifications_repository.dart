@@ -6,7 +6,8 @@ class NotificationsRepository {
 
   NotificationsRepository(this._api);
 
-  Future<NotificationsPageData> list({int page = 1, int limit = 20, String? severity}) async {
+  Future<NotificationsPageData> list(
+      {int page = 1, int limit = 20, String? severity}) async {
     final query = <String, dynamic>{'page': page, 'limit': limit};
     if (severity != null && severity.isNotEmpty) {
       query['severity'] = severity;

@@ -53,7 +53,8 @@ class AuthController extends ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     final result = await _repo.login(email.trim(), password);
-    await _tokenStore.saveTokens(access: result.accessToken, refresh: result.refreshToken);
+    await _tokenStore.saveTokens(
+        access: result.accessToken, refresh: result.refreshToken);
     await _tokenStore.saveAdmin(result.admin.toJson());
     _set(AuthStatus.authenticated, result.admin);
   }

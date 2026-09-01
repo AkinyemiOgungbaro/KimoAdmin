@@ -116,7 +116,8 @@ class PuzzleLibrary {
   factory PuzzleLibrary.fromJson(Map<String, dynamic> j) => PuzzleLibrary(
         total: (j['total'] as num?)?.toInt() ?? 0,
         images: ((j['images'] as List?) ?? const [])
-            .map((e) => PuzzleImage.fromJson((e as Map).cast<String, dynamic>()))
+            .map(
+                (e) => PuzzleImage.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
       );
 }
@@ -132,7 +133,8 @@ class GameDetail {
         summary: GameSummary.fromJson(j),
         range: j['range'] as String? ?? '',
         library: j['library'] is Map
-            ? PuzzleLibrary.fromJson((j['library'] as Map).cast<String, dynamic>())
+            ? PuzzleLibrary.fromJson(
+                (j['library'] as Map).cast<String, dynamic>())
             : null,
       );
 }
@@ -144,7 +146,8 @@ class GameSettingsPatch {
   final bool? maintenance;
   final bool? randomiseImages;
 
-  const GameSettingsPatch({this.difficulty, this.maxCoins, this.maintenance, this.randomiseImages});
+  const GameSettingsPatch(
+      {this.difficulty, this.maxCoins, this.maintenance, this.randomiseImages});
 
   Map<String, dynamic> toJson() => {
         if (difficulty != null) 'difficulty': difficulty,
@@ -180,7 +183,9 @@ class TriviaQuestion {
         category: j['category'] as String? ?? '',
         difficulty: j['difficulty'] as String? ?? '',
         prompt: j['prompt'] as String? ?? '',
-        options: ((j['options'] as List?) ?? const []).map((e) => e.toString()).toList(),
+        options: ((j['options'] as List?) ?? const [])
+            .map((e) => e.toString())
+            .toList(),
         answerIndex: (j['answer_index'] as num?)?.toInt() ?? -1,
         isActive: j['is_active'] as bool? ?? true,
         createdAt: j['created_at'] as String?,
@@ -200,11 +205,13 @@ class TriviaPageData {
     required this.limit,
   });
 
-  int get pageCount => limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
+  int get pageCount =>
+      limit <= 0 ? 1 : ((total + limit - 1) ~/ limit).clamp(1, 1 << 30);
 
   factory TriviaPageData.fromJson(Map<String, dynamic> j) => TriviaPageData(
         items: ((j['items'] as List?) ?? const [])
-            .map((e) => TriviaQuestion.fromJson((e as Map).cast<String, dynamic>()))
+            .map((e) =>
+                TriviaQuestion.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
         total: (j['total'] as num?)?.toInt() ?? 0,
         page: (j['page'] as num?)?.toInt() ?? 1,
@@ -226,10 +233,13 @@ class TriviaImportResult {
     required this.rejected,
   });
 
-  factory TriviaImportResult.fromJson(Map<String, dynamic> j) => TriviaImportResult(
+  factory TriviaImportResult.fromJson(Map<String, dynamic> j) =>
+      TriviaImportResult(
         category: j['category'] as String? ?? '',
         added: (j['added'] as num?)?.toInt() ?? 0,
         duplicates: (j['duplicates'] as num?)?.toInt() ?? 0,
-        rejected: ((j['rejected'] as List?) ?? const []).map((e) => e.toString()).toList(),
+        rejected: ((j['rejected'] as List?) ?? const [])
+            .map((e) => e.toString())
+            .toList(),
       );
 }

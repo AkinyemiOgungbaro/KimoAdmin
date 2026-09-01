@@ -72,9 +72,11 @@ class TournamentsPageData {
     required this.limit,
   });
 
-  factory TournamentsPageData.fromJson(Map<String, dynamic> j) => TournamentsPageData(
+  factory TournamentsPageData.fromJson(Map<String, dynamic> j) =>
+      TournamentsPageData(
         items: ((j['items'] as List?) ?? const [])
-            .map((e) => TournamentItem.fromJson((e as Map).cast<String, dynamic>()))
+            .map((e) =>
+                TournamentItem.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
         total: (j['total'] as num?)?.toInt() ?? 0,
         page: (j['page'] as num?)?.toInt() ?? 1,
@@ -138,7 +140,8 @@ class LeaderboardData {
       tournamentName: t?['name'] as String?,
       tournamentStatus: t?['status'] as String?,
       items: ((j['items'] as List?) ?? const [])
-          .map((e) => LeaderboardEntry.fromJson((e as Map).cast<String, dynamic>()))
+          .map((e) =>
+              LeaderboardEntry.fromJson((e as Map).cast<String, dynamic>()))
           .toList(),
       total: (j['total'] as num?)?.toInt() ?? 0,
       page: (j['page'] as num?)?.toInt() ?? 1,

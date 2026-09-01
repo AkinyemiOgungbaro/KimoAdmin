@@ -19,7 +19,8 @@ class GamesRepository {
     return GameDetail.fromJson((data as Map).cast<String, dynamic>());
   }
 
-  Future<GameSummary> updateSettings(String key, GameSettingsPatch patch) async {
+  Future<GameSummary> updateSettings(
+      String key, GameSettingsPatch patch) async {
     final data = await _api.patch('/admin/games/$key', data: patch.toJson());
     return GameSummary.fromJson((data as Map).cast<String, dynamic>());
   }
@@ -35,7 +36,8 @@ class GamesRepository {
       'name': name,
       'file': MultipartFile.fromBytes(bytes, filename: filename),
     });
-    final data = await _api.post('/admin/games/picture_puzzle/images', data: form);
+    final data =
+        await _api.post('/admin/games/picture_puzzle/images', data: form);
     return PuzzleImage.fromJson((data as Map).cast<String, dynamic>());
   }
 
@@ -44,7 +46,8 @@ class GamesRepository {
 
   // ---- trivia questions ----------------------------------------------------
 
-  Future<TriviaPageData> listTrivia({String? category, int page = 1, int limit = 20}) async {
+  Future<TriviaPageData> listTrivia(
+      {String? category, int page = 1, int limit = 20}) async {
     final data = await _api.get('/admin/games/trivia/questions', query: {
       if (category != null && category.isNotEmpty) 'category': category,
       'page': page,

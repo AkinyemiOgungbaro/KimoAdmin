@@ -27,9 +27,14 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
   bool _saving = false;
 
   late String _name = widget.existing?.name ?? '';
-  late final List<String> _selectedPlacements = widget.existing?.placement.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList() ?? [];
+  late final List<String> _selectedPlacements = widget.existing?.placement
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList() ??
+      [];
   late String _targetUrl = widget.existing?.targetUrl ?? '';
-  
+
   PlatformFile? _pickedImage;
   String? _startsAt;
   String? _endsAt;
@@ -46,7 +51,8 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
   }
 
   Future<void> _pickImage() async {
-    final picked = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+    final picked = await FilePicker.platform
+        .pickFiles(type: FileType.image, withData: true);
     if (picked == null || picked.files.isEmpty) return;
     setState(() => _pickedImage = picked.files.first);
   }
@@ -54,7 +60,8 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
   Future<void> _save() async {
     if (!_form.currentState!.validate()) return;
     if (widget.existing == null && _pickedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please pick an image')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Please pick an image')));
       return;
     }
     _form.currentState!.save();
@@ -62,10 +69,11 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
     try {
       MultipartFile? file;
       if (_pickedImage != null) {
-        file = MultipartFile.fromBytes(_pickedImage!.bytes!, filename: _pickedImage!.name);
+        file = MultipartFile.fromBytes(_pickedImage!.bytes!,
+            filename: _pickedImage!.name);
       }
       final placementsStr = _selectedPlacements.join(',');
-      
+
       if (widget.existing != null) {
         await bannersRepository.updateBanner(
           id: widget.existing!.id,
@@ -89,17 +97,19 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
       if (mounted) Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed: $e')));
         setState(() => _saving = false);
       }
     }
   }
 
   Future<void> _pickDate(bool isStart) async {
-    final initial = isStart 
+    final initial = isStart
         ? (widget.existing?.startsAt ?? DateTime.now())
-        : (widget.existing?.endsAt ?? DateTime.now().add(const Duration(days: 7)));
-    
+        : (widget.existing?.endsAt ??
+            DateTime.now().add(const Duration(days: 7)));
+
     final d = await showDatePicker(
       context: context,
       initialDate: initial,
@@ -107,7 +117,7 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
       lastDate: DateTime(2030),
     );
     if (d == null) return;
-    
+
     if (mounted) {
       final t = await showTimePicker(
         context: context,
@@ -145,7 +155,9 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold)),
+              Text(title,
+                  style: GoogleFonts.outfit(
+                      fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 24),
               TextFormField(
                 initialValue: _name,
@@ -159,14 +171,17 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
                 builder: (state) {
                   return InputDecorator(
-                    decoration: fieldDecoration(hint: 'Placements').copyWith(errorText: state.errorText),
+                    decoration: fieldDecoration(hint: 'Placements')
+                        .copyWith(errorText: state.errorText),
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: widget.placements.map((p) {
-                        final isSelected = _selectedPlacements.contains(p.placement);
+                        final isSelected =
+                            _selectedPlacements.contains(p.placement);
                         return FilterChip(
-                          label: Text('${p.placement} ${p.label.isNotEmpty ? '(${p.label})' : ''}'),
+                          label: Text(
+                              '${p.placement} ${p.label.isNotEmpty ? '(${p.label})' : ''}'),
                           selected: isSelected,
                           onSelected: (selected) {
                             setState(() {
@@ -178,7 +193,8 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                               state.didChange(_selectedPlacements);
                             });
                           },
-                          selectedColor: AppColors.primary.withValues(alpha: 0.2),
+                          selectedColor:
+                              AppColors.primary.withValues(alpha: 0.2),
                           checkmarkColor: AppColors.primary,
                         );
                       }).toList(),
@@ -199,7 +215,9 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                     child: InkWell(
                       onTap: () => _pickDate(true),
                       child: InputDecorator(
-                        decoration: const InputDecoration(labelText: 'Starts At', border: OutlineInputBorder()),
+                        decoration: const InputDecoration(
+                            labelText: 'Starts At',
+                            border: OutlineInputBorder()),
                         child: Text(_formatDate(_startsAt) ?? 'Select date'),
                       ),
                     ),
@@ -209,7 +227,8 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                     child: InkWell(
                       onTap: () => _pickDate(false),
                       child: InputDecorator(
-                        decoration: const InputDecoration(labelText: 'Ends At', border: OutlineInputBorder()),
+                        decoration: const InputDecoration(
+                            labelText: 'Ends At', border: OutlineInputBorder()),
                         child: Text(_formatDate(_endsAt) ?? 'Select date'),
                       ),
                     ),
@@ -221,9 +240,15 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   if (_pickedImage != null)
-                    Expanded(child: Text('Selected: ${_pickedImage!.name}', maxLines: 1, overflow: TextOverflow.ellipsis))
+                    Expanded(
+                        child: Text('Selected: ${_pickedImage!.name}',
+                            maxLines: 1, overflow: TextOverflow.ellipsis))
                   else if (widget.existing != null)
-                    Expanded(child: Image.network(widget.existing!.imageUrl, height: 60, fit: BoxFit.contain, alignment: Alignment.centerLeft))
+                    Expanded(
+                        child: Image.network(widget.existing!.imageUrl,
+                            height: 60,
+                            fit: BoxFit.contain,
+                            alignment: Alignment.centerLeft))
                   else
                     const Expanded(child: Text('No image selected')),
                   const SizedBox(width: 16),
@@ -245,8 +270,16 @@ class _UploadAdDialogState extends State<UploadAdDialog> {
                   const SizedBox(width: 16),
                   ElevatedButton(
                     onPressed: _saving ? null : _save,
-                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                    child: _saving ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) : const Text('Save Ad', style: TextStyle(color: Colors.white)),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary),
+                    child: _saving
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                                color: Colors.white, strokeWidth: 2))
+                        : const Text('Save Ad',
+                            style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),

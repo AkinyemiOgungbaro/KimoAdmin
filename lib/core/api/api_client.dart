@@ -67,7 +67,8 @@ class ApiClient {
   Future<String>? _refreshFuture;
 
   Future<String> _refreshToken() {
-    return _refreshFuture ??= _doRefresh().whenComplete(() => _refreshFuture = null);
+    return _refreshFuture ??=
+        _doRefresh().whenComplete(() => _refreshFuture = null);
   }
 
   Future<String> _doRefresh() async {
@@ -75,7 +76,8 @@ class ApiClient {
     if (refresh == null || refresh.isEmpty) {
       throw ApiException('No refresh token', statusCode: 401);
     }
-    final res = await _refreshDio.post('/admin/auth/refresh', data: {'refresh_token': refresh});
+    final res = await _refreshDio
+        .post('/admin/auth/refresh', data: {'refresh_token': refresh});
     final data = (res.data['data'] ?? res.data) as Map<String, dynamic>;
     final access = data['access_token'] as String;
     final newRefresh = data['refresh_token'] as String?;

@@ -1,11 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../core/di.dart';
+import '../../core/format.dart';
+import '../../core/range.dart';
 import '../../shared/widgets/admin_scaffold.dart';
+import '../../shared/widgets/async_view.dart';
+import '../../shared/widgets/range_dropdown.dart';
 import '../../theme/app_theme.dart';
+import 'data/wallet_models.dart';
 
-class WalletPage extends StatelessWidget {
+class WalletPage extends StatefulWidget {
   const WalletPage({super.key});
+
+  @override
+  State<WalletPage> createState() => _WalletPageState();
+}
+
+class _WalletPageState extends State<WalletPage> {
+  RangePeriod _period = RangePeriod.today;
+  late Future<WalletData> _future;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  void _load() {
+    _future = walletRepository.get(_period.token);
+  }
+
+  void _reload() => setState(_load);
+
+  void _onPeriod(RangePeriod p) {
+    if (p == _period) return;
+    setState(() {
+      _period = p;
+      _load();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,114 +62,86 @@ class WalletPage extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Center(
-                  child: Text(
-                    'History',
-                    style: GoogleFonts.inter(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: AppColors.cardBg,
-                    border: Border.all(color: AppColors.divider),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Today',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.keyboard_arrow_down,
-                          size: 16, color: AppColors.textSecondary),
-                    ],
-                  ),
-                ),
+                RangeDropdown(value: _period, onChanged: _onPeriod),
               ],
             ),
             const SizedBox(height: 32),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(flex: 7, child: _buildCashWalletOverview()),
-                const SizedBox(width: 24),
-                Expanded(flex: 5, child: _buildCoinEconomyOverview()),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 7,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: _buildTableSection(
-                          'Recent Cash Transactions',
-                          'View All Cash Transactions',
-                          [
-                            'ID',
-                            'User',
-                            'Type',
-                            'Method',
-                            'Amount',
-                            'Status',
-                            'Time'
-                          ],
+            AsyncView<WalletData>(
+              future: _future,
+              onRetry: _reload,
+              minHeight: 400,
+              builder: (context, data) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            flex: 7,
+                            child: _buildCashWalletOverview(
+                                data.cash, data.charts)),
+                        const SizedBox(width: 24),
+                        Expanded(
+                            flex: 5,
+                            child: _buildCoinEconomyOverview(
+                                data.coins, data.charts)),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 7,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: _buildTableSection(
+                                  'Recent Cash Transactions',
+                                  'View All Cash Transactions',
+                                  ['ID', 'User', 'Type', 'Amount', 'Status'],
+                                  data.recent.cashTransactions,
+                                ),
+                              ),
+                              const SizedBox(width: 24),
+                              Expanded(
+                                child: _buildTableSection(
+                                  'Pending Redemptions',
+                                  'View All Redemptions',
+                                  ['ID', 'User', 'Reward', 'Coins', 'Status'],
+                                  data.recent.pendingRedemptions,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 24),
-                      Expanded(
-                        child: _buildTableSection(
-                          'Pending Redemptions',
-                          'View All Redemptions',
-                          [
-                            'ID',
-                            'User',
-                            'Reward',
-                            'Coins',
-                            'Requested',
-                            'Status'
-                          ],
+                        const SizedBox(width: 24),
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            children: [
+                              _buildQuickActions(),
+                              const SizedBox(height: 24),
+                              // _buildAlerts(),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  flex: 5,
-                  child: Column(
-                    children: [
-                      _buildQuickActions(),
-                      const SizedBox(height: 24),
-                      _buildAlerts(),
-                    ],
-                  ),
-                ),
-              ],
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    _buildBottomSummary(),
+                  ],
+                );
+              },
             ),
-            const SizedBox(height: 24),
-            _buildBottomSummary(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCashWalletOverview() {
+  Widget _buildCashWalletOverview(WalletCashData cash, WalletCharts charts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -158,46 +165,46 @@ class WalletPage extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                      child: _statBox('Total Customer Funds', '₦24,850,000',
-                          'Available Balance')),
+                      child: _statTile(
+                          'Total Customer Funds', cash.totalCustomerFunds,
+                          isCurrency: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Funds Added Today', '₦3,450,000',
-                          'Available Balance',
-                          valueColor: AppColors.statusGreen)),
+                      child: _statTile('Funds Added', cash.fundsAdded,
+                          isCurrency: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Funds Withdrawn Today', '₦21,250,000',
-                          'Available Balance',
-                          valueColor: AppColors.statusRed)),
+                      child: _statTile('Funds Withdrawn', cash.fundsSpent,
+                          isCurrency: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox(
-                          'Pending Withdrawals', '₦780,000', '32 requests',
-                          valueColor: AppColors.statusOrange)),
+                      child: _statTile('Pending Withdrawals', cash.reversals,
+                          isCurrency:
+                              true)), // Reversals are usually negative but here used for symmetry
                 ],
               ),
               const SizedBox(height: 24),
-              _buildCashFlowSummary(),
+              _buildCashFlowSummary(cash),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Expanded(
-                      child: _statBox('Total Active Wallets', '18,942', null,
-                          valueColor: AppColors.statusRed)),
+                      child: _statTile(
+                          'Total Active Wallets', cash.activeWallets,
+                          isCurrency: false)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Pending Deposits', '₦320,000', null,
-                          valueColor: AppColors.statusOrange)),
+                      child: _statTile('Pending Deposits', cash.pendingDeposits,
+                          isCurrency: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox(
-                          'Failed Transactions', '₦21,250,000', null,
-                          valueColor: AppColors.statusGreen)),
+                      child: _statTile(
+                          'Failed Transactions', cash.failedPayments,
+                          isCurrency: false)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('RefundToday', '₦780,000', null,
-                          valueColor: const Color(0xFF6B4EFF))),
+                      child:
+                          const SizedBox()), // Empty tile or add another one if needed
                 ],
               ),
             ],
@@ -218,7 +225,7 @@ class WalletPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Cash Wallet Analytics',
+                    Text('Coin Sources',
                         style: GoogleFonts.inter(fontWeight: FontWeight.w600)),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -231,23 +238,25 @@ class WalletPage extends StatelessWidget {
                               PieChartData(
                                 sectionsSpace: 0,
                                 centerSpaceRadius: 40,
-                                sections: [
-                                  PieChartSectionData(
-                                      color: const Color(0xFF22C55E),
-                                      value: 58,
-                                      title: '',
-                                      radius: 15),
-                                  PieChartSectionData(
-                                      color: const Color(0xFF6B4EFF),
-                                      value: 34,
-                                      title: '',
-                                      radius: 15),
-                                  PieChartSectionData(
-                                      color: const Color(0xFFF59E0B),
-                                      value: 8,
-                                      title: '',
-                                      radius: 15),
-                                ],
+                                sections: charts.bySource.entries
+                                    .toList()
+                                    .asMap()
+                                    .entries
+                                    .map((e) {
+                                  const colors = [
+                                    Color(0xFF22C55E),
+                                    Color(0xFF3B82F6),
+                                    Color(0xFFEAB308),
+                                    Color(0xFFF97316),
+                                    Color(0xFF8B5CF6)
+                                  ];
+                                  return PieChartSectionData(
+                                    color: colors[e.key % colors.length],
+                                    value: e.value.value.toDouble(),
+                                    title: '',
+                                    radius: 15,
+                                  );
+                                }).toList(),
                               ),
                             ),
                           ),
@@ -256,16 +265,28 @@ class WalletPage extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _legendItem(const Color(0xFF22C55E),
-                                    'Funds Added', 'N38.2M', '58%'),
-                                const SizedBox(height: 8),
-                                _legendItem(const Color(0xFF6B4EFF),
-                                    'Funds Used', 'N22.4M', '34%'),
-                                const SizedBox(height: 8),
-                                _legendItem(const Color(0xFFF59E0B),
-                                    'Withdrawals', 'N12.0M', '8%'),
-                              ],
+                              children: charts.bySource.entries
+                                  .toList()
+                                  .asMap()
+                                  .entries
+                                  .take(3)
+                                  .map((e) {
+                                const colors = [
+                                  Color(0xFF22C55E),
+                                  Color(0xFF3B82F6),
+                                  Color(0xFFEAB308),
+                                  Color(0xFFF97316),
+                                  Color(0xFF8B5CF6)
+                                ];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: _legendItem(
+                                      colors[e.key % colors.length],
+                                      e.value.key,
+                                      Format.number(e.value.value),
+                                      ''),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
@@ -328,23 +349,42 @@ class WalletPage extends StatelessWidget {
                             bottomTitles: AxisTitles(
                               sideTitles: SideTitles(
                                 showTitles: true,
+                                reservedSize: 30,
+                                interval: charts.cashBalanceTrend.length > 5
+                                    ? (charts.cashBalanceTrend.length / 5)
+                                        .ceilToDouble()
+                                    : 1,
                                 getTitlesWidget: (value, meta) {
-                                  const dates = [
-                                    'May 15',
-                                    'May 16',
-                                    'May 17',
-                                    'May 18',
-                                    'May 19',
-                                    'May 20',
-                                    'May 21'
-                                  ];
-                                  if (value >= 0 && value < dates.length) {
+                                  if (value >= 0 &&
+                                      value < charts.cashBalanceTrend.length) {
+                                    final dayStr = charts
+                                        .cashBalanceTrend[value.toInt()].day;
+                                    String formattedDay = dayStr;
+                                    try {
+                                      final date = DateTime.parse(dayStr);
+                                      final months = [
+                                        'Jan',
+                                        'Feb',
+                                        'Mar',
+                                        'Apr',
+                                        'May',
+                                        'Jun',
+                                        'Jul',
+                                        'Aug',
+                                        'Sep',
+                                        'Oct',
+                                        'Nov',
+                                        'Dec'
+                                      ];
+                                      formattedDay =
+                                          '${months[date.month - 1]} ${date.day}';
+                                    } catch (_) {}
                                     return Padding(
                                       padding: const EdgeInsets.only(top: 8.0),
-                                      child: Text(dates[value.toInt()],
+                                      child: Text(formattedDay,
                                           style: GoogleFonts.inter(
                                               fontSize: 10,
-                                              color: AppColors.textSecondary)),
+                                              color: AppColors.textMuted)),
                                     );
                                   }
                                   return const SizedBox.shrink();
@@ -354,18 +394,19 @@ class WalletPage extends StatelessWidget {
                           ),
                           borderData: FlBorderData(show: false),
                           minY: 0,
-                          maxY: 4,
+                          maxY: charts.cashBalanceTrend.fold<double>(
+                                  0.0,
+                                  (m, e) =>
+                                      e.value > m ? e.value.toDouble() : m) *
+                              1.2,
                           lineBarsData: [
                             LineChartBarData(
-                              spots: const [
-                                FlSpot(0, 1.8),
-                                FlSpot(1, 1.5),
-                                FlSpot(2, 2.3),
-                                FlSpot(3, 2.4),
-                                FlSpot(4, 2.8),
-                                FlSpot(5, 2.2),
-                                FlSpot(6, 3.5),
-                              ],
+                              spots: charts.cashBalanceTrend
+                                  .asMap()
+                                  .entries
+                                  .map((e) => FlSpot(e.key.toDouble(),
+                                      e.value.value.toDouble()))
+                                  .toList(),
                               isCurved: true,
                               color: const Color(0xFF6B4EFF),
                               barWidth: 2,
@@ -390,7 +431,7 @@ class WalletPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCoinEconomyOverview() {
+  Widget _buildCoinEconomyOverview(WalletCoinsData coins, WalletCharts charts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -413,46 +454,46 @@ class WalletPage extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                      child: _statBox('Coins in Circulation', '18,450,250',
-                          'Available Balance',
+                      child: _statTile(
+                          'Coins in Circulation', coins.inCirculation,
                           isDark: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Coins Earned Today', '2,354,800',
-                          'Available Balance',
+                      child: _statTile('Coins Earned Today', coins.earned,
                           isDark: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Coins Redeemed Today', '1,214,600',
-                          'Available Balance',
+                      child: _statTile('Coins Redeemed Today', coins.spent,
                           isDark: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox(
-                          'Pending Redemptions', '1,890', '32 requests',
+                      child: _statTile(
+                          'Pending Redemptions', coins.pendingRedemptions,
                           isDark: true)),
                 ],
               ),
               const SizedBox(height: 24),
-              _buildCoinFlowSummary(),
+              _buildCoinFlowSummary(coins),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Expanded(
-                      child: _statBox('Coins Expired/Reversed', '240,000', null,
+                      child: _statTile('Coins Expired/Reversed', coins.expired,
                           isDark: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Reward Claimed Today', '42,810', null,
+                      child: _statTile(
+                          'Reward Claimed Today', coins.rewardsClaimed,
                           isDark: true)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Failed Transactions', '37', null,
+                      child: _statTile('Reversed Coins', coins.reversed,
                           isDark: true, showIcon: false)),
                   const SizedBox(width: 16),
                   Expanded(
-                      child: _statBox('Refund Today', '12', null,
-                          isDark: true, showIcon: false)),
+                      child: _statTile(
+                          'Bonus in Circulation', coins.bonusInCirculation,
+                          isDark: true)),
                 ],
               ),
             ],
@@ -486,28 +527,25 @@ class WalletPage extends StatelessWidget {
                               PieChartData(
                                 sectionsSpace: 0,
                                 centerSpaceRadius: 40,
-                                sections: [
-                                  PieChartSectionData(
-                                      color: const Color(0xFF22C55E),
-                                      value: 62,
-                                      title: '',
-                                      radius: 15),
-                                  PieChartSectionData(
-                                      color: const Color(0xFF6B4EFF),
-                                      value: 15,
-                                      title: '',
-                                      radius: 15),
-                                  PieChartSectionData(
-                                      color: const Color(0xFFF59E0B),
-                                      value: 13,
-                                      title: '',
-                                      radius: 15),
-                                  PieChartSectionData(
-                                      color: const Color(0xFFEF4444),
-                                      value: 10,
-                                      title: '',
-                                      radius: 15),
-                                ],
+                                sections: charts.bySink.entries
+                                    .toList()
+                                    .asMap()
+                                    .entries
+                                    .map((e) {
+                                  const colors = [
+                                    Color(0xFF22C55E),
+                                    Color(0xFF3B82F6),
+                                    Color(0xFFEAB308),
+                                    Color(0xFFF97316),
+                                    Color(0xFF8B5CF6)
+                                  ];
+                                  return PieChartSectionData(
+                                    color: colors[e.key % colors.length],
+                                    value: e.value.value.toDouble(),
+                                    title: '',
+                                    radius: 15,
+                                  );
+                                }).toList(),
                               ),
                             ),
                           ),
@@ -516,23 +554,29 @@ class WalletPage extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                _legendItem(const Color(0xFF22C55E), 'Games',
-                                    null, '62%',
-                                    isDark: true),
-                                const SizedBox(height: 8),
-                                _legendItem(const Color(0xFF6B4EFF),
-                                    'Referrals', null, '15%',
-                                    isDark: true),
-                                const SizedBox(height: 8),
-                                _legendItem(const Color(0xFFF59E0B), 'Bonuses',
-                                    null, '13%',
-                                    isDark: true),
-                                const SizedBox(height: 8),
-                                _legendItem(const Color(0xFFEF4444),
-                                    'Promotions', null, '10%',
-                                    isDark: true),
-                              ],
+                              children: charts.bySink.entries
+                                  .toList()
+                                  .asMap()
+                                  .entries
+                                  .take(4)
+                                  .map((e) {
+                                const colors = [
+                                  Color(0xFF22C55E),
+                                  Color(0xFF3B82F6),
+                                  Color(0xFFEAB308),
+                                  Color(0xFFF97316),
+                                  Color(0xFF8B5CF6)
+                                ];
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: _legendItem(
+                                      colors[e.key % colors.length],
+                                      e.value.key,
+                                      Format.number(e.value.value),
+                                      '',
+                                      isDark: true),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
@@ -590,11 +634,15 @@ class WalletPage extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _topGameRow('Puzzle', '6,245,000', '24,850', '251'),
-                    const SizedBox(height: 8),
-                    _topGameRow('XOXO', '4,125,000', '15,420', '267'),
-                    const SizedBox(height: 8),
-                    _topGameRow('Trivia', '3,250,000', '10,230', '318'),
+                    for (final g in charts.topGames)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _topGameRow(
+                            g.game,
+                            Format.number(g.coinsEarned),
+                            Format.number(g.players),
+                            Format.number(g.avgCoinsPerUser)),
+                      ),
                     const SizedBox(height: 16),
                     Align(
                       alignment: Alignment.centerRight,
@@ -618,6 +666,28 @@ class WalletPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _statTile(String label, var tile,
+      {bool isDark = false, bool isCurrency = false, bool showIcon = true}) {
+    if (tile == null) {
+      return _statBox(label, 'N/A', null, isDark: isDark, showIcon: showIcon);
+    }
+
+    final formattedValue =
+        isCurrency ? Format.naira(tile.value) : Format.number(tile.value);
+
+    final change = tile.changePercent;
+    final changeText = change == null
+        ? null
+        : '${change > 0 ? '+' : ''}${change.toStringAsFixed(1)}%';
+
+    final valueColor = isDark
+        ? Colors.white
+        : ((change ?? 0) >= 0 ? AppColors.statusGreen : AppColors.statusRed);
+
+    return _statBox(label, formattedValue, changeText,
+        isDark: isDark, showIcon: showIcon, valueColor: valueColor);
   }
 
   Widget _statBox(String label, String value, String? subtext,
@@ -666,7 +736,7 @@ class WalletPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCashFlowSummary() {
+  Widget _buildCashFlowSummary(WalletCashData cash) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -683,14 +753,17 @@ class WalletPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _flowItem('N24,850,000', 'Funds Added', const Color(0xFF6B4EFF)),
+              _flowItem(Format.nairaCompact(cash.fundsAdded.value),
+                  'Funds Added', const Color(0xFF6B4EFF)),
               const Icon(Icons.arrow_forward),
-              _flowItem(
-                  'N3,450,000', 'Available Balance', const Color(0xFF3B82F6)),
+              _flowItem(Format.nairaCompact(cash.totalCustomerFunds.value),
+                  'Available Balance', const Color(0xFF3B82F6)),
               const Icon(Icons.arrow_forward),
-              _flowItem('N2,250,000', 'Funds Used', const Color(0xFF22C55E)),
+              _flowItem(Format.nairaCompact(cash.fundsSpent.value),
+                  'Funds Used', const Color(0xFF22C55E)),
               const Icon(Icons.arrow_forward),
-              _flowItem('N1,250,000', 'Withdrawals', const Color(0xFF6B4EFF)),
+              _flowItem(Format.nairaCompact(cash.reversals?.value ?? 0),
+                  'Withdrawals', const Color(0xFF6B4EFF)),
             ],
           ),
         ],
@@ -698,7 +771,7 @@ class WalletPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCoinFlowSummary() {
+  Widget _buildCoinFlowSummary(WalletCoinsData coins) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -715,13 +788,19 @@ class WalletPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _flowItem('2.35M', 'Coins Earned', const Color(0xFFF59E0B)),
+              _flowItem(Format.compact(coins.earned.value), 'Coins Earned',
+                  const Color(0xFFF59E0B)),
               const Icon(Icons.arrow_forward),
-              _flowItem('18.45M', 'In Wallets', const Color(0xFFF59E0B)),
+              _flowItem(Format.compact(coins.inCirculation.value), 'In Wallets',
+                  const Color(0xFFF59E0B)),
               const Icon(Icons.arrow_forward),
-              _flowItem('1.21M', 'Funds Used', const Color(0xFFF59E0B)),
+              _flowItem(Format.compact(coins.spent.value), 'Funds Used',
+                  const Color(0xFFF59E0B)),
               const Icon(Icons.arrow_forward),
-              _flowItem('17.00M', 'Outstanding', const Color(0xFFF59E0B)),
+              _flowItem(
+                  Format.compact(coins.inCirculation.value - coins.spent.value),
+                  'Outstanding',
+                  const Color(0xFFF59E0B)),
             ],
           ),
         ],
@@ -749,8 +828,8 @@ class WalletPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTableSection(
-      String title, String footerAction, List<String> cols) {
+  Widget _buildTableSection(String title, String footerAction,
+      List<String> cols, List<Map<String, dynamic>> rows) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8F5FF),
@@ -782,13 +861,54 @@ class WalletPage extends StatelessWidget {
             ),
           ),
           const Divider(height: 1, color: Color(0xFFEBEBFF)),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text('Placeholder for list rows',
-                style: GoogleFonts.inter(
-                    fontSize: 12, color: AppColors.textSecondary)),
-          ),
-          const Divider(height: 1, color: Color(0xFFEBEBFF)),
+          if (rows.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text('No entries found',
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textSecondary)),
+            ),
+          for (final row in rows) ...[
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Text(
+                          row['id'] == null
+                              ? '-'
+                              : (row['id'].toString().length > 8
+                                  ? '${row['id'].toString().substring(0, 8)}...'
+                                  : row['id'].toString()),
+                          style: GoogleFonts.inter(fontSize: 12))),
+                  Expanded(
+                      child: Text(row['username']?.toString() ?? '-',
+                          style: GoogleFonts.inter(fontSize: 12))),
+                  if (row.containsKey('purpose'))
+                    Expanded(
+                        child: Text(row['purpose']?.toString() ?? '-',
+                            style: GoogleFonts.inter(fontSize: 12))),
+                  if (row.containsKey('reward'))
+                    Expanded(
+                        child: Text(row['reward']?.toString() ?? '-',
+                            style: GoogleFonts.inter(fontSize: 12))),
+                  if (row.containsKey('amount_kobo'))
+                    Expanded(
+                        child: Text(
+                            Format.naira(row['amount_kobo'] as int? ?? 0),
+                            style: GoogleFonts.inter(fontSize: 12))),
+                  if (row.containsKey('coins'))
+                    Expanded(
+                        child: Text(Format.number(row['coins'] as int? ?? 0),
+                            style: GoogleFonts.inter(fontSize: 12))),
+                  Expanded(
+                      child: Text(row['status']?.toString() ?? '-',
+                          style: GoogleFonts.inter(fontSize: 12))),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: Color(0xFFEBEBFF)),
+          ],
           Padding(
             padding: const EdgeInsets.all(12),
             child: Center(
@@ -817,32 +937,38 @@ class WalletPage extends StatelessWidget {
               style:
                   GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
-          _actionRow('Add Funds to User Wallet'),
-          _actionRow('Adjust User Coin'),
-          _actionRow('Process Withdrawal'),
-          _actionRow('View All Transactions'),
+          _actionRow('Add Funds to User Wallet', () => context.go('/users')),
+          _actionRow('Adjust User Coin', () => context.go('/users')),
+          _actionRow('Process Withdrawal', () => context.go('/users')),
+          _actionRow('View All Transactions', () => context.go('/payments')),
         ],
       ),
     );
   }
 
-  Widget _actionRow(String label) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEBEBFF),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label,
-              style:
-                  GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500)),
-          const Icon(Icons.chevron_right,
-              size: 16, color: AppColors.textSecondary),
-        ],
+  Widget _actionRow(String label, [VoidCallback? onTap]) {
+    return GestureDetector(
+      onTap: onTap,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEBEBFF),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(label,
+                  style: GoogleFonts.inter(
+                      fontSize: 12, fontWeight: FontWeight.w500)),
+              const Icon(Icons.chevron_right,
+                  size: 16, color: AppColors.textSecondary),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -864,17 +990,17 @@ class WalletPage extends StatelessWidget {
               Text('Alerts',
                   style: GoogleFonts.inter(
                       fontSize: 13, fontWeight: FontWeight.w600)),
-              Text('View All →',
-                  style: GoogleFonts.inter(
-                      fontSize: 12, fontWeight: FontWeight.w600)),
+              // Text('View All →',
+              //     style: GoogleFonts.inter(
+              //         fontSize: 12, fontWeight: FontWeight.w600)),
             ],
           ),
           const SizedBox(height: 12),
-          _alertRow('Unusual Coin Accumulation',
-              'User KimoUser9887 earned 450k coins in 40 minutes'),
-          _alertRow('Failed Deposit Attempt',
-              '3 failed deposit in the last 30 minutes'),
-          _alertRow('Redemption Failed', 'N500 Airtime to KimoUser654'),
+          // _alertRow('Unusual Coin Accumulation',
+          //     'User KimoUser9887 earned 450k coins in 40 minutes'),
+          // _alertRow('Failed Deposit Attempt',
+          //     '3 failed deposit in the last 30 minutes'),
+          // _alertRow('Redemption Failed', 'N500 Airtime to KimoUser654'),
         ],
       ),
     );

@@ -41,7 +41,8 @@ class AppSidebar extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: _navItems.map((item) {
                 final isActive = currentRoute == item.route ||
-                    (currentRoute.startsWith(item.route) && item.route != '/dashboard');
+                    (currentRoute.startsWith(item.route) &&
+                        item.route != '/dashboard');
                 return _NavTile(item: item, isActive: isActive);
               }).toList(),
             ),
@@ -61,7 +62,8 @@ class _SidebarFooter extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Sign out?'),
-        content: const Text('You will need to sign in again to access the dashboard.'),
+        content: const Text(
+            'You will need to sign in again to access the dashboard.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -136,7 +138,8 @@ class _SidebarFooter extends StatelessWidget {
               IconButton(
                 tooltip: 'Sign out',
                 visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.logout_rounded, size: 18, color: AppColors.sidebarText),
+                icon: const Icon(Icons.logout_rounded,
+                    size: 18, color: AppColors.sidebarText),
                 onPressed: () => _confirmLogout(context),
               ),
             ],
@@ -206,7 +209,8 @@ class _NavTile extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-            color: isActive ? AppColors.sidebarActiveText : AppColors.sidebarText,
+            color:
+                isActive ? AppColors.sidebarActiveText : AppColors.sidebarText,
           ),
         ),
       ),

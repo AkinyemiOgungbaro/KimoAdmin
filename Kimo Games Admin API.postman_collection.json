@@ -7871,6 +7871,627 @@
         }
       ],
       "description": "Ad Mgt"
+    },
+    {
+      "name": "Admin finance",
+      "item": [
+        {
+          "name": "Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/payments?range=30d",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "payments"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "30d"
+                }
+              ]
+            },
+            "description": "The eight tiles and the recent-payments table.\n\n**Query**\n- `range` — `today` (default), `7d`, `30d`\n\n`200` → `{ \"data\": {\n  \"range\": \"today\",\n  \"total_payments\": 24850000,\n  \"payments\": { \"value\": 3450000, \"change_percent\": 20.1 },\n  \"successful\": { … }, \"pending\": { … }, \"failed\": { … },\n  \"fees\": { \"value\": 43000, \"change_percent\": 12.0 },\n  \"refunds\": null,\n  \"unreconciled\": null,\n  \"recent\": [ { \"reference\": \"kimo_…\", \"username\": \"mikedgab\", \"purpose\": \"wallet_topup\", \"channel\": \"card\", \"amount_kobo\": 500000, \"status\": \"successful\", \"created_at\": \"…\" } ] } }`\n\n`change_percent` is `null` when the previous window was zero — growth from nothing has no percentage worth printing.\n\n**`fees` and `channel` are only filled for payments taken since the provider started reporting them.** Older rows carry neither, so the fee total covers recent payments rather than all time.\n\n`refunds` and `unreconciled` are `null` — see the folder note."
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/payments?range=30d",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "payments"
+                  ],
+                  "query": [
+                    {
+                      "key": "range",
+                      "value": "30d"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Resource-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 01 Sep 2026 08:42:51 GMT"
+                },
+                {
+                  "key": "Origin-Agent-Cluster",
+                  "value": "?1"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000; includeSubDomains"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin, Accept-Encoding"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 Caddy"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Dns-Prefetch-Control",
+                  "value": "off"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Permitted-Cross-Domain-Policies",
+                  "value": "none"
+                },
+                {
+                  "key": "X-Ratelimit-Limit",
+                  "value": "300"
+                },
+                {
+                  "key": "X-Ratelimit-Remaining",
+                  "value": "298"
+                },
+                {
+                  "key": "X-Ratelimit-Reset",
+                  "value": "46"
+                },
+                {
+                  "key": "X-Xss-Protection",
+                  "value": "0"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Payments retrieved\",\n    \"data\": {\n        \"range\": \"30d\",\n        \"tiles\": {\n            \"total_payments_kobo\": 133275000,\n            \"payments_kobo\": {\n                \"value\": 133275000,\n                \"change_percent\": null\n            },\n            \"successful_kobo\": {\n                \"value\": 75825000,\n                \"change_percent\": null\n            },\n            \"pending_kobo\": {\n                \"value\": 57450000,\n                \"change_percent\": null\n            },\n            \"failed_count\": {\n                \"value\": 0,\n                \"change_percent\": null\n            },\n            \"provider_fees_kobo\": {\n                \"value\": 25850,\n                \"change_percent\": null\n            },\n            \"refunds_kobo\": null,\n            \"unreconciled_kobo\": null\n        },\n        \"recent\": [\n            {\n                \"id\": \"5b8fecba-7fd0-4094-b200-9c9ee96d40c1\",\n                \"reference\": \"kimo_46cc7c4e76c143c48804bc357789e0fc\",\n                \"username\": \"kimotest01\",\n                \"purpose\": \"order_payment\",\n                \"channel\": \"bank\",\n                \"amount_kobo\": 2585000,\n                \"status\": \"successful\",\n                \"created_at\": \"2026-09-01T08:09:50.711Z\"\n            },\n            {\n                \"id\": \"0996bb62-4f75-4cbe-814d-04f998f60403\",\n                \"reference\": \"kimo_cd8332099dc44c92b2bbad5485725e01\",\n                \"username\": \"Rutex\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 1515000,\n                \"status\": \"pending\",\n                \"created_at\": \"2026-08-31T21:52:15.672Z\"\n            },\n            {\n                \"id\": \"90bf0922-5dec-48f3-bc44-a2cea66dde11\",\n                \"reference\": \"kimo_7461a46015ce48e4b5f05a7a5748147b\",\n                \"username\": \"Rutex\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 1515000,\n                \"status\": \"pending\",\n                \"created_at\": \"2026-08-31T21:21:31.649Z\"\n            },\n            {\n                \"id\": \"d9dd4827-c277-4b4d-87cf-4103ee22e28a\",\n                \"reference\": \"kimo_736b0c39db134d9ab1e156c1ef0a44d3\",\n                \"username\": \"Rutex\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 1670000,\n                \"status\": \"pending\",\n                \"created_at\": \"2026-08-31T19:54:44.566Z\"\n            },\n            {\n                \"id\": \"29efbbcf-ddf5-4cec-abdb-5b1cff51e935\",\n                \"reference\": \"kimo_a7fe5a3fe19742b6a03807fbf3e1363e\",\n                \"username\": \"kimotest01\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 805000,\n                \"status\": \"successful\",\n                \"created_at\": \"2026-08-28T07:31:32.624Z\"\n            },\n            {\n                \"id\": \"86796671-a06f-44ee-913c-70eaf1be008f\",\n                \"reference\": \"kimo_8f077b0402be4d249d05280d6ea7ffc9\",\n                \"username\": \"kimotest01\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 3385000,\n                \"status\": \"successful\",\n                \"created_at\": \"2026-08-28T07:23:41.455Z\"\n            },\n            {\n                \"id\": \"7071a9e0-49ac-4a00-af66-853dd35d3fb5\",\n                \"reference\": \"kimo_8a48b00447e54815b29677b208c550c1\",\n                \"username\": \"kimotest01\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 10085000,\n                \"status\": \"successful\",\n                \"created_at\": \"2026-08-28T07:11:12.335Z\"\n            },\n            {\n                \"id\": \"6f9eaa7f-52b5-4e0d-a153-a1b29e4d3699\",\n                \"reference\": \"kimo_27b073a7b3574b9b8d4e2d09aa3cb443\",\n                \"username\": \"kimotest01\",\n                \"purpose\": \"order_payment\",\n                \"channel\": null,\n                \"amount_kobo\": 500000,\n                \"status\": \"successful\",\n                \"created_at\": \"2026-08-28T06:51:41.568Z\"\n            }\n        ]\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Wallet",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/wallet?range=30d",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "wallet"
+              ],
+              "query": [
+                {
+                  "key": "range",
+                  "value": "30d"
+                }
+              ]
+            },
+            "description": "Both halves of the wallet screen in one call.\n\n**Query**\n- `range` — `today` (default), `7d`, `30d`\n\n`200` → `{ \"data\": { \"range\": \"today\", \"cash\": { … }, \"coins\": { … }, \"charts\": { … }, \"recent\": { … } } }`\n\n**Cash:** `total_customer_funds`, `funds_added`, `funds_spent`, `reversals`, `active_wallets`, `pending_deposits`, `failed_payments`, plus `all_time`. `funds_withdrawn`, `pending_withdrawals` and `refunds` are `null`.\n\n**Coins:** `coins_in_circulation`, `bonus_in_circulation`, `coins_earned`, `coins_spent`, `coins_reversed`, `coins_expired`, `pending_redemptions`, `rewards_claimed`, `by_source`, `by_sink`, `top_games`. `failed_transactions` is `null`.\n\n**`bonus_in_circulation` is a portion of `coins_in_circulation`, not a separate pot.** `coins_expired` counts bonus coins that reached the end of their week without being spent.\n\n**Charts:** `cash_balance_trend` is the balance at the end of each of the last 14 days, worked back from today's total by undoing every movement since — balances are not stored per day, and reconstructing them this way cannot drift from the ledger.\n\n**Recent:** `cash_transactions`, `coin_transactions` and `pending_redemptions`, each with the player's username."
+          },
+          "response": [
+            {
+              "name": "Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/wallet?range=30d",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "wallet"
+                  ],
+                  "query": [
+                    {
+                      "key": "range",
+                      "value": "30d"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Resource-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 01 Sep 2026 08:44:29 GMT"
+                },
+                {
+                  "key": "Origin-Agent-Cluster",
+                  "value": "?1"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000; includeSubDomains"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin, Accept-Encoding"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 Caddy"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Dns-Prefetch-Control",
+                  "value": "off"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Permitted-Cross-Domain-Policies",
+                  "value": "none"
+                },
+                {
+                  "key": "X-Ratelimit-Limit",
+                  "value": "300"
+                },
+                {
+                  "key": "X-Ratelimit-Remaining",
+                  "value": "299"
+                },
+                {
+                  "key": "X-Ratelimit-Reset",
+                  "value": "60"
+                },
+                {
+                  "key": "X-Xss-Protection",
+                  "value": "0"
+                },
+                {
+                  "key": "Transfer-Encoding",
+                  "value": "chunked"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Wallet retrieved\",\n    \"data\": {\n        \"range\": \"30d\",\n        \"cash\": {\n            \"total_customer_funds_kobo\": 5500000,\n            \"funds_added_kobo\": {\n                \"value\": 81325000,\n                \"change_percent\": null\n            },\n            \"funds_spent_kobo\": {\n                \"value\": 75825000,\n                \"change_percent\": null\n            },\n            \"reversals_kobo\": {\n                \"value\": 0,\n                \"change_percent\": null\n            },\n            \"wallets_holding_cash\": 4,\n            \"pending_deposits_kobo\": 57450000,\n            \"failed_payments\": 0,\n            \"funds_withdrawn_kobo\": null,\n            \"pending_withdrawals_kobo\": null,\n            \"refunds_kobo\": null,\n            \"all_time\": {\n                \"funds_added_kobo\": 81325000,\n                \"funds_spent_kobo\": 75825000,\n                \"withdrawn_kobo\": null\n            }\n        },\n        \"coins\": {\n            \"coins_in_circulation\": 15075,\n            \"bonus_in_circulation\": 4,\n            \"coins_earned\": {\n                \"value\": 25245,\n                \"change_percent\": null\n            },\n            \"coins_spent\": {\n                \"value\": 10170,\n                \"change_percent\": null\n            },\n            \"coin_reversals\": {\n                \"value\": 0,\n                \"change_percent\": null\n            },\n            \"wallets_holding_coins\": 13,\n            \"pending_redemptions\": 25,\n            \"rewards_claimed\": {\n                \"value\": 0,\n                \"change_percent\": null\n            },\n            \"coins_expired\": {\n                \"value\": 0,\n                \"change_percent\": null\n            },\n            \"failed_transactions\": null,\n            \"all_time\": {\n                \"coins_earned\": 25245\n            }\n        },\n        \"charts\": {\n            \"coins_by_source\": [\n                {\n                    \"label\": \"Admin\",\n                    \"coins\": 15000,\n                    \"percent\": 59.4\n                },\n                {\n                    \"label\": \"Games\",\n                    \"coins\": 10066,\n                    \"percent\": 39.9\n                },\n                {\n                    \"label\": \"Missions\",\n                    \"coins\": 120,\n                    \"percent\": 0.5\n                },\n                {\n                    \"label\": \"Referrals\",\n                    \"coins\": 50,\n                    \"percent\": 0.2\n                },\n                {\n                    \"label\": \"streak_bonus\",\n                    \"coins\": 9,\n                    \"percent\": 0\n                }\n            ],\n            \"coins_by_sink\": [\n                {\n                    \"label\": \"Rewards\",\n                    \"coins\": 5600,\n                    \"percent\": 55.1\n                },\n                {\n                    \"label\": \"Tournament entries\",\n                    \"coins\": 4000,\n                    \"percent\": 39.3\n                },\n                {\n                    \"label\": \"Boosters\",\n                    \"coins\": 570,\n                    \"percent\": 5.6\n                }\n            ],\n            \"cash_balance_trend\": [\n                {\n                    \"day\": \"2026-08-19\",\n                    \"value\": 0\n                },\n                {\n                    \"day\": \"2026-08-20\",\n                    \"value\": 0\n                },\n                {\n                    \"day\": \"2026-08-21\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-22\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-23\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-24\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-25\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-26\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-27\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-28\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-29\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-30\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-08-31\",\n                    \"value\": 5000000\n                },\n                {\n                    \"day\": \"2026-09-01\",\n                    \"value\": 5500000\n                }\n            ],\n            \"top_games_by_coins\": [\n                {\n                    \"name\": \"XOXO\",\n                    \"coins\": 8557,\n                    \"players\": 10,\n                    \"average_per_player\": 856\n                },\n                {\n                    \"name\": \"Picture Puzzle\",\n                    \"coins\": 870,\n                    \"players\": 6,\n                    \"average_per_player\": 145\n                },\n                {\n                    \"name\": \"Trivia\",\n                    \"coins\": 648,\n                    \"players\": 12,\n                    \"average_per_player\": 54\n                }\n            ]\n        },\n        \"recent_cash\": [\n            {\n                \"id\": \"fa812f0f-f567-4ab4-a060-35c864073dc6\",\n                \"username\": \"Rutex\",\n                \"reason\": \"cash_adjustment\",\n                \"amount\": 500000,\n                \"balance_after\": 500000,\n                \"created_at\": \"2026-09-01T08:39:27.415Z\"\n            },\n            {\n                \"id\": \"9653a78d-19e4-4268-8aa8-62a4acb7a2b9\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_purchase\",\n                \"amount\": -2585000,\n                \"balance_after\": 0,\n                \"created_at\": \"2026-09-01T08:10:18.120Z\"\n            },\n            {\n                \"id\": \"f5e2f4c6-585e-4b40-9544-534a1ec0e86e\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_topup\",\n                \"amount\": 2585000,\n                \"balance_after\": 2585000,\n                \"created_at\": \"2026-09-01T08:10:18.100Z\"\n            },\n            {\n                \"id\": \"0354a902-fa38-4de7-baae-2ef89b33f43f\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_purchase\",\n                \"amount\": -805000,\n                \"balance_after\": 0,\n                \"created_at\": \"2026-08-28T07:31:58.816Z\"\n            },\n            {\n                \"id\": \"0b5deb0d-e07e-46b0-be3f-86d47277c662\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_topup\",\n                \"amount\": 805000,\n                \"balance_after\": 805000,\n                \"created_at\": \"2026-08-28T07:31:58.803Z\"\n            },\n            {\n                \"id\": \"2d88192b-164c-4065-9e78-f90559b3f880\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_purchase\",\n                \"amount\": -3385000,\n                \"balance_after\": 0,\n                \"created_at\": \"2026-08-28T07:24:14.487Z\"\n            },\n            {\n                \"id\": \"c774660a-18dd-4e53-bd28-c60b08cae02c\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_topup\",\n                \"amount\": 3385000,\n                \"balance_after\": 3385000,\n                \"created_at\": \"2026-08-28T07:24:14.476Z\"\n            },\n            {\n                \"id\": \"77af4b52-2b2a-4307-914d-1d5f91178b22\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"cash_purchase\",\n                \"amount\": -10085000,\n                \"balance_after\": 0,\n                \"created_at\": \"2026-08-28T07:11:53.442Z\"\n            }\n        ],\n        \"recent_coins\": [\n            {\n                \"id\": \"09bd6920-d581-439b-8117-d4a0d6f47a09\",\n                \"username\": \"AkinyemiofIbadan\",\n                \"reason\": \"game_reward\",\n                \"amount\": 10,\n                \"balance_after\": 1118,\n                \"created_at\": \"2026-09-01T08:30:25.069Z\"\n            },\n            {\n                \"id\": \"e430c46e-5631-4522-be88-9fe973063080\",\n                \"username\": \"AkinyemiofIbadan\",\n                \"reason\": \"game_reward\",\n                \"amount\": 30,\n                \"balance_after\": 1108,\n                \"created_at\": \"2026-09-01T08:27:24.946Z\"\n            },\n            {\n                \"id\": \"96e32652-ee6d-43d5-9594-fd03ac773a25\",\n                \"username\": \"AkinyemiofIbadan\",\n                \"reason\": \"booster_purchase\",\n                \"amount\": -5,\n                \"balance_after\": 1078,\n                \"created_at\": \"2026-09-01T08:27:06.852Z\"\n            },\n            {\n                \"id\": \"86fd3589-c11a-4601-ba2a-d82c75a3ddac\",\n                \"username\": \"AkinyemiofIbadan\",\n                \"reason\": \"streak_bonus\",\n                \"amount\": 9,\n                \"balance_after\": 1083,\n                \"created_at\": \"2026-09-01T08:23:52.597Z\"\n            },\n            {\n                \"id\": \"135198ef-211f-43cc-a3e6-20600ea9907d\",\n                \"username\": \"AkinyemiofIbadan\",\n                \"reason\": \"game_reward\",\n                \"amount\": 77,\n                \"balance_after\": 1074,\n                \"created_at\": \"2026-09-01T08:23:52.595Z\"\n            },\n            {\n                \"id\": \"99b33a8a-21dd-49fd-94f9-54ac2c485f5f\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"tournament_entry_fee\",\n                \"amount\": -500,\n                \"balance_after\": 272,\n                \"created_at\": \"2026-09-01T08:21:26.131Z\"\n            },\n            {\n                \"id\": \"a484b3c6-37d5-4474-8bb1-2493995578f3\",\n                \"username\": \"kimotest01\",\n                \"reason\": \"booster_purchase\",\n                \"amount\": -5,\n                \"balance_after\": 772,\n                \"created_at\": \"2026-09-01T08:18:31.819Z\"\n            },\n            {\n                \"id\": \"16402ed5-519e-4b70-9405-13f82351c03c\",\n                \"username\": \"Rutex\",\n                \"reason\": \"tournament_entry_fee\",\n                \"amount\": -500,\n                \"balance_after\": 7640,\n                \"created_at\": \"2026-08-31T22:16:33.647Z\"\n            }\n        ],\n        \"pending_redemptions\": [\n            {\n                \"id\": \"011c9a30-ee74-4252-9847-65b4e441410c\",\n                \"username\": \"kimotest01\",\n                \"reward_name\": \"BoomAir Bass\",\n                \"coin_cost\": 0,\n                \"paid_kobo\": 2500000,\n                \"created_at\": \"2026-09-01T08:09:49.942Z\"\n            },\n            {\n                \"id\": \"44b06edb-9f5d-42d1-ae80-5e7e94e91c80\",\n                \"username\": \"Rutex\",\n                \"reward_name\": \"Cheetah 3C Charger\",\n                \"coin_cost\": 1000,\n                \"paid_kobo\": 1200000,\n                \"created_at\": \"2026-08-31T21:52:15.273Z\"\n            },\n            {\n                \"id\": \"77b585bc-2531-44f8-87a0-80df5abe3138\",\n                \"username\": \"Rutex\",\n                \"reward_name\": \"Cheetah 3C Charger\",\n                \"coin_cost\": 1000,\n                \"paid_kobo\": 1200000,\n                \"created_at\": \"2026-08-31T21:21:31.125Z\"\n            },\n            {\n                \"id\": \"dd74fed1-5c92-4a82-84a4-b36277db956f\",\n                \"username\": \"Rutex\",\n                \"reward_name\": \"Cheetah 3C Charger\",\n                \"coin_cost\": 1000,\n                \"paid_kobo\": 1200000,\n                \"created_at\": \"2026-08-31T19:54:43.929Z\"\n            },\n            {\n                \"id\": \"68eddd9a-674a-495b-92db-92316f932a93\",\n                \"username\": \"kimotest01\",\n                \"reward_name\": \"Kimo Games Hoodie\",\n                \"coin_cost\": 600,\n                \"paid_kobo\": 720000,\n                \"created_at\": \"2026-08-28T07:31:31.860Z\"\n            },\n            {\n                \"id\": \"3ab48a2b-aca4-4e8c-8a84-47805cfc555e\",\n                \"username\": \"kimotest01\",\n                \"reward_name\": \"5 Litres Vegetable Oil\",\n                \"coin_cost\": 0,\n                \"paid_kobo\": 1800000,\n                \"created_at\": \"2026-08-28T07:23:40.800Z\"\n            },\n            {\n                \"id\": \"e0302f6a-ef43-4ab4-a317-233edb39bde8\",\n                \"username\": \"kimotest01\",\n                \"reward_name\": \"Cheetah 3C Charger\",\n                \"coin_cost\": 0,\n                \"paid_kobo\": 1500000,\n                \"created_at\": \"2026-08-28T07:23:40.800Z\"\n            },\n            {\n                \"id\": \"85708ff4-45be-4810-bae9-1b763f2031fd\",\n                \"username\": \"kimotest01\",\n                \"reward_name\": \"Vault X Speaker\",\n                \"coin_cost\": 1000,\n                \"paid_kobo\": 10000000,\n                \"created_at\": \"2026-08-28T07:11:11.641Z\"\n            }\n        ],\n        \"pending_withdrawals\": null\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/reports",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "reports"
+              ]
+            },
+            "description": "The six summary cards. No `range` — every figure is all-time, which is what a report means here.\n\n`200` → `{ \"data\": { \"items\": [\n  { \"report\": \"payments\", \"title\": \"Payment Report\", \"headline\": \"Total Volume\", \"value\": 24850000, \"format\": \"kobo\" },\n  { \"report\": \"wallet\", \"headline\": \"Total Coins Earned\", \"value\": 18450250, \"format\": \"coins\" },\n  { \"report\": \"users\", … }, { \"report\": \"games\", … },\n  { \"report\": \"tournaments\", … }, { \"report\": \"revenue\", … } ] } }`\n\n`format` says how to render `value` — `kobo` divides by 100 and prefixes ₦, `coins` and `count` print as they are, `text` is already a string (the top game's name).\n\nEach card's *View Report* downloads the PDF below."
+          },
+          "response": [
+            {
+              "name": "Success",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/admin/reports",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "reports"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "gzip"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Resource-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 01 Sep 2026 08:45:42 GMT"
+                },
+                {
+                  "key": "Origin-Agent-Cluster",
+                  "value": "?1"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000; includeSubDomains"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin, Accept-Encoding"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 Caddy"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Dns-Prefetch-Control",
+                  "value": "off"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Permitted-Cross-Domain-Policies",
+                  "value": "none"
+                },
+                {
+                  "key": "X-Ratelimit-Limit",
+                  "value": "300"
+                },
+                {
+                  "key": "X-Ratelimit-Remaining",
+                  "value": "299"
+                },
+                {
+                  "key": "X-Ratelimit-Reset",
+                  "value": "60"
+                },
+                {
+                  "key": "X-Xss-Protection",
+                  "value": "0"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "265"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Reports retrieved\",\n    \"data\": {\n        \"items\": [\n            {\n                \"report\": \"payments\",\n                \"title\": \"Payment Report\",\n                \"label\": \"Total volume\",\n                \"value\": 75825000\n            },\n            {\n                \"report\": \"wallet\",\n                \"title\": \"Wallet & Coins Report\",\n                \"label\": \"Coins earned\",\n                \"value\": 25245\n            },\n            {\n                \"report\": \"users\",\n                \"title\": \"User Report\",\n                \"label\": \"Total users\",\n                \"value\": 19\n            },\n            {\n                \"report\": \"games\",\n                \"title\": \"Game Performance Report\",\n                \"label\": \"Top game\",\n                \"value\": \"XOXO\"\n            },\n            {\n                \"report\": \"tournaments\",\n                \"title\": \"Tournament Report\",\n                \"label\": \"Tournaments run\",\n                \"value\": 13\n            },\n            {\n                \"report\": \"revenue\",\n                \"title\": \"Revenue Report\",\n                \"label\": \"Net revenue\",\n                \"value\": 75799150\n            }\n        ]\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Download a report",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/reports/payments/pdf",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "reports",
+                "payments",
+                "pdf"
+              ]
+            },
+            "description": "The card's *View Report*, as a branded PDF.\n\n`report` is `payments`, `wallet`, `users`, `games`, `tournaments` or `revenue`.\n\nReturns `application/pdf` with `Content-Disposition: attachment`, so **use Send and Download** — this one does not answer with the usual envelope, because a PDF is a file the browser saves.\n\nAll-time figures, the platform logo, and the date it was generated.\n\n**Errors**\n- `422` `report` is not one of the six"
+          },
+          "response": []
+        },
+        {
+          "name": "Adjust a balance",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{player_id}}\",\n  \"currency\": \"cash\", //Cash or Coin\n  \"amount\": 500000,\n  \"reason\": \"Testing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/wallet/adjust",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "wallet",
+                "adjust"
+              ]
+            },
+            "description": "Moves a player's balance by hand.\n\n**Super admin only.** A `support` or `admin` token gets `403`.\n\n**Body**\n- `user_id`\n- `currency` — `coin` or `cash`\n- `amount` — negative takes it away. Zero is refused.\n- `reason` — 4–300 characters, and it is stored\n\n`200` → `{ \"message\": \"Balance adjusted\", \"data\": { \"user_id\": \"…\", \"currency\": \"coin\", \"balance_before\": 5000, \"balance_after\": 5500 } }`\n\n**Every call writes an audit row** with the actor, the amount, the balance before and after, and the reason. That is required of anything that moves money by hand — an adjustment without those is indistinguishable from a bug.\n\n**A credit here is gameplay coins, never bonus.** A correction a player is owed should still be there next week rather than expiring on Sunday.\n\n**Errors**\n- `400` the player would go below zero\n- `403` not a super admin\n- `422` zero amount, or a reason under four characters"
+          },
+          "response": [
+            {
+              "name": "Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"user_id\": \"{{player_id}}\",\n  \"currency\": \"cash\", //Cash or Coin\n  \"amount\": 500000,\n  \"reason\": \"Testing\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/admin/wallet/adjust",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "admin",
+                    "wallet",
+                    "adjust"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Access-Control-Allow-Credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Alt-Svc",
+                  "value": "h3=\":443\"; ma=2592000"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "154"
+                },
+                {
+                  "key": "Content-Security-Policy",
+                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Cross-Origin-Opener-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Cross-Origin-Resource-Policy",
+                  "value": "same-origin"
+                },
+                {
+                  "key": "Date",
+                  "value": "Tue, 01 Sep 2026 08:47:55 GMT"
+                },
+                {
+                  "key": "Origin-Agent-Cluster",
+                  "value": "?1"
+                },
+                {
+                  "key": "Referrer-Policy",
+                  "value": "no-referrer"
+                },
+                {
+                  "key": "Strict-Transport-Security",
+                  "value": "max-age=31536000; includeSubDomains"
+                },
+                {
+                  "key": "Vary",
+                  "value": "Origin, Accept-Encoding"
+                },
+                {
+                  "key": "Via",
+                  "value": "1.1 Caddy"
+                },
+                {
+                  "key": "X-Content-Type-Options",
+                  "value": "nosniff"
+                },
+                {
+                  "key": "X-Dns-Prefetch-Control",
+                  "value": "off"
+                },
+                {
+                  "key": "X-Download-Options",
+                  "value": "noopen"
+                },
+                {
+                  "key": "X-Frame-Options",
+                  "value": "SAMEORIGIN"
+                },
+                {
+                  "key": "X-Permitted-Cross-Domain-Policies",
+                  "value": "none"
+                },
+                {
+                  "key": "X-Ratelimit-Limit",
+                  "value": "300"
+                },
+                {
+                  "key": "X-Ratelimit-Remaining",
+                  "value": "298"
+                },
+                {
+                  "key": "X-Ratelimit-Reset",
+                  "value": "44"
+                },
+                {
+                  "key": "X-Xss-Protection",
+                  "value": "0"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"message\": \"Balance adjusted\",\n    \"data\": {\n        \"user_id\": \"7b8d2d42-1fb5-49ab-be3e-39882dc601c9\",\n        \"currency\": \"cash\",\n        \"balance_before\": 500000,\n        \"balance_after\": 1000000\n    }\n}"
+            }
+          ]
+        }
+      ],
+      "description": "The Payments, Wallet and Reports screens. Every figure is measured against the window immediately before it, and days run on the Lagos boundary.\n\n**A `null` figure means we do not hold that data**, not zero. Withdrawals and refunds are not part of this product, and a coin movement either commits or does not, so there is no failed-coin count. Show those as N/A rather than 0 — zero reads as \"none today\" when the truth is \"we do not do this\"."
     }
   ],
   "auth": {

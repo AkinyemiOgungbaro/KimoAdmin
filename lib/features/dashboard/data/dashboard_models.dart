@@ -56,7 +56,8 @@ class TopPlayer {
   final String username;
   final num rounds;
   final num coins;
-  const TopPlayer({required this.username, required this.rounds, required this.coins});
+  const TopPlayer(
+      {required this.username, required this.rounds, required this.coins});
 
   factory TopPlayer.fromJson(Map<String, dynamic> j) => TopPlayer(
         username: j['username'] as String? ?? '—',
@@ -84,7 +85,8 @@ class UpcomingTournament {
     required this.entrants,
   });
 
-  factory UpcomingTournament.fromJson(Map<String, dynamic> j) => UpcomingTournament(
+  factory UpcomingTournament.fromJson(Map<String, dynamic> j) =>
+      UpcomingTournament(
         id: j['id']?.toString() ?? '',
         name: j['name'] as String? ?? '—',
         status: j['status'] as String? ?? 'upcoming',
@@ -147,10 +149,9 @@ class DashboardData {
     final coins = (j['coins'] as Map?)?.cast<String, dynamic>() ?? const {};
     final charts = (j['charts'] as Map?)?.cast<String, dynamic>() ?? const {};
 
-    List<ChartPoint> points(String key) =>
-        ((charts[key] as List?) ?? const [])
-            .map((e) => ChartPoint.fromJson((e as Map).cast<String, dynamic>()))
-            .toList();
+    List<ChartPoint> points(String key) => ((charts[key] as List?) ?? const [])
+        .map((e) => ChartPoint.fromJson((e as Map).cast<String, dynamic>()))
+        .toList();
 
     List<T> list<T>(String key, T Function(Map<String, dynamic>) f) =>
         ((j[key] as List?) ?? const [])
@@ -169,7 +170,8 @@ class DashboardData {
       adViews: DashboardTile.from(tiles['ad_views']),
       tournamentEntries: DashboardTile.from(tiles['tournament_entries']),
       homeScreenInstalls: DashboardTile.from(tiles['home_screen_installs']),
-      homeScreenInstallsTotal: DashboardTile.from(tiles['home_screen_installs_total']),
+      homeScreenInstallsTotal:
+          DashboardTile.from(tiles['home_screen_installs_total']),
       coinsEarnedAllTime: (coins['earned_all_time'] as num?) ?? 0,
       coinsRedeemedAllTime: (coins['redeemed_all_time'] as num?) ?? 0,
       coinsInCirculation: (coins['in_circulation'] as num?) ?? 0,
@@ -177,7 +179,8 @@ class DashboardData {
       roundsPlayedSeries: points('rounds_played'),
       recentActivity: list('recent_activity', ActivityEntry.fromJson),
       topPlayers: list('top_players_this_week', TopPlayer.fromJson),
-      upcomingTournaments: list('upcoming_tournaments', UpcomingTournament.fromJson),
+      upcomingTournaments:
+          list('upcoming_tournaments', UpcomingTournament.fromJson),
     );
   }
 }

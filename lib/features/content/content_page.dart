@@ -87,7 +87,8 @@ class _ContentPageState extends State<ContentPage>
                     labelColor: AppColors.textPrimary,
                     unselectedLabelColor: AppColors.textSecondary,
                     labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                    unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                    unselectedLabelStyle:
+                        GoogleFonts.inter(fontWeight: FontWeight.w500),
                     indicatorColor: const Color(0xFF6B4EFF),
                     labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                     tabs: _tabs.map((t) => Tab(text: t)).toList(),
@@ -96,7 +97,8 @@ class _ContentPageState extends State<ContentPage>
                 InkWell(
                   onTap: () => _uploadAd(),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 12),
                     decoration: BoxDecoration(
                       color: const Color(0xFF6B4EFF),
                       borderRadius: BorderRadius.circular(8),
@@ -134,63 +136,63 @@ class _ContentPageState extends State<ContentPage>
 
   Widget _statusTab(String filter) {
     return AsyncView<BannersPageData>(
-      future: _listFuture,
-      onRetry: _reload,
-      builder: (context, data) {
-        final now = DateTime.now().toUtc();
-        final items = data.items.where((b) {
-          if (filter == 'all') return true;
-          
-          if (filter == 'expired') {
-            return b.endsAt != null && b.endsAt!.isBefore(now);
-          }
-          if (filter == 'scheduled') {
-            return b.startsAt != null && b.startsAt!.isAfter(now);
-          }
-          if (filter == 'active') {
-            final started = b.startsAt == null || b.startsAt!.isBefore(now);
-            final ended = b.endsAt != null && b.endsAt!.isBefore(now);
-            return b.status == 'active' && started && !ended;
-          }
-          return true;
-        }).toList();
+        future: _listFuture,
+        onRetry: _reload,
+        builder: (context, data) {
+          final now = DateTime.now().toUtc();
+          final items = data.items.where((b) {
+            if (filter == 'all') return true;
 
-        return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFF8F5FF),
-          ),
-          child: Column(
-            children: [
-              _buildTableHeader(),
-              const Divider(height: 1, color: Color(0xFFEBEBFF)),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: items.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: Color(0xFFEBEBFF)),
-                  itemBuilder: (context, index) {
-                    final b = items[index];
-                    return InkWell(
-                      onTap: () => _uploadAd(existing: b),
-                      child: _buildTableRow(
-                        b.imageUrl,
-                        b.name,
-                        b.placement,
-                        '${b.width} x ${b.height}',
-                        b.format.toUpperCase(),
-                        b.status,
-                        b.impressions.toString(),
-                        b.clicks.toString(),
-                        '${b.ctr}%',
-                      ),
-                    );
-                  },
+            if (filter == 'expired') {
+              return b.endsAt != null && b.endsAt!.isBefore(now);
+            }
+            if (filter == 'scheduled') {
+              return b.startsAt != null && b.startsAt!.isAfter(now);
+            }
+            if (filter == 'active') {
+              final started = b.startsAt == null || b.startsAt!.isBefore(now);
+              final ended = b.endsAt != null && b.endsAt!.isBefore(now);
+              return b.status == 'active' && started && !ended;
+            }
+            return true;
+          }).toList();
+
+          return Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFFF8F5FF),
+            ),
+            child: Column(
+              children: [
+                _buildTableHeader(),
+                const Divider(height: 1, color: Color(0xFFEBEBFF)),
+                Expanded(
+                  child: ListView.separated(
+                    itemCount: items.length,
+                    separatorBuilder: (_, __) =>
+                        const Divider(height: 1, color: Color(0xFFEBEBFF)),
+                    itemBuilder: (context, index) {
+                      final b = items[index];
+                      return InkWell(
+                        onTap: () => _uploadAd(existing: b),
+                        child: _buildTableRow(
+                          b.imageUrl,
+                          b.name,
+                          b.placement,
+                          '${b.width} x ${b.height}',
+                          b.format.toUpperCase(),
+                          b.status,
+                          b.impressions.toString(),
+                          b.clicks.toString(),
+                          '${b.ctr}%',
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
+              ],
+            ),
+          );
+        });
   }
 
   Widget _buildTableHeader() {
@@ -223,7 +225,16 @@ class _ContentPageState extends State<ContentPage>
     );
   }
 
-  Widget _buildTableRow(String imageUrl, String name, String placement, String size, String type, String status, String impressions, String clicks, String ctr) {
+  Widget _buildTableRow(
+      String imageUrl,
+      String name,
+      String placement,
+      String size,
+      String type,
+      String status,
+      String impressions,
+      String clicks,
+      String ctr) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Row(
@@ -234,7 +245,8 @@ class _ContentPageState extends State<ContentPage>
               height: 48,
               decoration: BoxDecoration(
                 color: const Color(0xFFE2E2E2),
-                image: DecorationImage(image: NetworkImage(imageUrl), fit: BoxFit.cover),
+                image: DecorationImage(
+                    image: NetworkImage(imageUrl), fit: BoxFit.cover),
               ),
             ),
           ),
@@ -242,45 +254,61 @@ class _ContentPageState extends State<ContentPage>
             flex: 3,
             child: Padding(
               padding: const EdgeInsets.only(left: 16),
-              child: Text(placement, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+              child: Text(placement,
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.textSecondary)),
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(size, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(size,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,
-            child: Text(type, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(type,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,
             child: Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColors.statusGreenBg,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   status,
-                  style: GoogleFonts.inter(fontSize: 12, color: AppColors.statusGreen, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: AppColors.statusGreen,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(impressions, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(impressions,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,
-            child: Text(clicks, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(clicks,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,
-            child: Text(ctr, style: GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+            child: Text(ctr,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
           Expanded(
             flex: 2,

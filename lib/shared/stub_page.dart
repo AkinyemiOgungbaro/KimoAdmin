@@ -27,10 +27,13 @@ class StubPage extends StatelessWidget {
             const SizedBox(height: 20),
             Text(title,
                 style: GoogleFonts.inter(
-                    fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
             const SizedBox(height: 10),
             Text('This section is coming soon.',
-                style: GoogleFonts.inter(fontSize: 15, color: AppColors.textSecondary)),
+                style: GoogleFonts.inter(
+                    fontSize: 15, color: AppColors.textSecondary)),
           ],
         ),
       ),

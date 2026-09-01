@@ -60,7 +60,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/tournaments',
-      pageBuilder: (_, state) => const NoTransitionPage(child: TournamentsPage()),
+      pageBuilder: (_, state) =>
+          const NoTransitionPage(child: TournamentsPage()),
     ),
     GoRoute(
       path: '/rewards',
@@ -80,7 +81,8 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/notifications',
-      pageBuilder: (_, state) => const NoTransitionPage(child: NotificationsPage()),
+      pageBuilder: (_, state) =>
+          const NoTransitionPage(child: NotificationsPage()),
     ),
     GoRoute(
       path: '/reports',
@@ -90,7 +92,9 @@ final GoRouter appRouter = GoRouter(
       path: '/settings',
       pageBuilder: (_, state) => const NoTransitionPage(
         child: StubPage(
-            title: 'Settings', route: '/settings', icon: Icons.settings_outlined),
+            title: 'Settings',
+            route: '/settings',
+            icon: Icons.settings_outlined),
       ),
     ),
   ],

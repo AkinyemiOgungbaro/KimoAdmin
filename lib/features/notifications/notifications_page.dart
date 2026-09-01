@@ -17,7 +17,7 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   late Future<NotificationsPageData> _allFuture;
   late Future<NotificationsPageData> _criticalFuture;
   late Future<NotificationsPageData> _actionRequiredFuture;
@@ -39,7 +39,8 @@ class _NotificationsPageState extends State<NotificationsPage>
       return data;
     });
     _criticalFuture = notificationsRepository.list(severity: 'critical');
-    _actionRequiredFuture = notificationsRepository.list(severity: 'action_required');
+    _actionRequiredFuture =
+        notificationsRepository.list(severity: 'action_required');
     _warningFuture = notificationsRepository.list(severity: 'warning');
     _systemFuture = notificationsRepository.list(severity: 'system');
   }
@@ -49,11 +50,13 @@ class _NotificationsPageState extends State<NotificationsPage>
       await notificationsRepository.markAllAsRead();
       if (mounted) {
         setState(_loadAll);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('All notifications marked as read')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('All notifications marked as read')));
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Could not mark as read')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Could not mark as read')));
       }
     }
   }
@@ -91,49 +94,52 @@ class _NotificationsPageState extends State<NotificationsPage>
                     labelColor: AppColors.textPrimary,
                     unselectedLabelColor: AppColors.textSecondary,
                     labelStyle: GoogleFonts.inter(fontWeight: FontWeight.w600),
-                    unselectedLabelStyle: GoogleFonts.inter(fontWeight: FontWeight.w500),
+                    unselectedLabelStyle:
+                        GoogleFonts.inter(fontWeight: FontWeight.w500),
                     indicatorColor: const Color(0xFF6B4EFF),
                     labelPadding: const EdgeInsets.symmetric(horizontal: 16),
                     tabs: [
                       Tab(text: 'All (${_counts?.all ?? 0})'),
                       Tab(text: 'Critical (${_counts?.critical ?? 0})'),
-                      Tab(text: 'Action Required (${_counts?.actionRequired ?? 0})'),
+                      Tab(
+                          text:
+                              'Action Required (${_counts?.actionRequired ?? 0})'),
                       Tab(text: 'Warnings (${_counts?.warning ?? 0})'),
                       Tab(text: 'System (${_counts?.system ?? 0})'),
                     ],
                   ),
                 ),
-                  InkWell(
-                    onTap: _markAllAsRead,
-                    borderRadius: BorderRadius.circular(4),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Mark All as Read',
-                        style: GoogleFonts.inter(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                InkWell(
+                  onTap: _markAllAsRead,
+                  borderRadius: BorderRadius.circular(4),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      'Mark All as Read',
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),
+                ),
+              ],
+            ),
+            const Divider(height: 1),
+            const SizedBox(height: 24),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _tabView(_allFuture),
+                  _tabView(_criticalFuture),
+                  _tabView(_actionRequiredFuture),
+                  _tabView(_warningFuture),
+                  _tabView(_systemFuture),
                 ],
               ),
-              const Divider(height: 1),
-              const SizedBox(height: 24),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _tabView(_allFuture),
-                    _tabView(_criticalFuture),
-                    _tabView(_actionRequiredFuture),
-                    _tabView(_warningFuture),
-                    _tabView(_systemFuture),
-                  ],
-                ),
-              ),
+            ),
           ],
         ),
       ),
@@ -172,7 +178,9 @@ class _NotificationsPageState extends State<NotificationsPage>
     );
   }
 
-  Widget _notificationItem(String title, String subtitle, String type, String time, {bool read = false}) {
+  Widget _notificationItem(
+      String title, String subtitle, String type, String time,
+      {bool read = false}) {
     Color typeColor;
     Color typeBg;
     if (type == 'critical') {

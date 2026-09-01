@@ -49,7 +49,7 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
   String _category = 'gadget';
   String _type = 'physical';
   String _network = 'mtn';
-  
+
   List<DataPlan> _dataPlans = [];
   bool _fetchingPlans = false;
   String? _selectedVariation;
@@ -89,7 +89,16 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
 
   @override
   void dispose() {
-    for (final c in [_name, _description, _subcategory, _coinCost, _cashCost, _discountPercent, _price, _stock]) {
+    for (final c in [
+      _name,
+      _description,
+      _subcategory,
+      _coinCost,
+      _cashCost,
+      _discountPercent,
+      _price,
+      _stock
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -103,7 +112,8 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
       if (mounted) {
         setState(() {
           _dataPlans = plans;
-          if (plans.isNotEmpty && !plans.any((p) => p.variationCode == _selectedVariation)) {
+          if (plans.isNotEmpty &&
+              !plans.any((p) => p.variationCode == _selectedVariation)) {
             _selectedVariation = plans.first.variationCode;
           }
         });
@@ -116,7 +126,8 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
   }
 
   Future<void> _pickImage() async {
-    final res = await FilePicker.platform.pickFiles(type: FileType.image, withData: true);
+    final res = await FilePicker.platform
+        .pickFiles(type: FileType.image, withData: true);
     if (res != null && res.files.isNotEmpty) {
       setState(() => _picked = res.files.first);
     }
@@ -137,7 +148,8 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
     num? cash, discount;
     if (isDigital) {
       discount = num.tryParse(_discountPercent.text.trim());
-      if (discount == null || discount < 0) return _fail('Enter a valid discount percent');
+      if (discount == null || discount < 0)
+        return _fail('Enter a valid discount percent');
     } else {
       cash = num.tryParse(_cashCost.text.trim());
       if (cash == null || cash < 0) return _fail('Enter a valid cash cost');
@@ -150,11 +162,14 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
     }
 
     final stock = int.tryParse(_stock.text.trim());
-    if (!isData && (stock == null || stock < 0)) return _fail('Enter a valid stock quantity');
+    if (!isData && (stock == null || stock < 0))
+      return _fail('Enter a valid stock quantity');
 
-    if (!_isEdit && _picked == null && !isDigital) return _fail('Add a product image');
+    if (!_isEdit && _picked == null && !isDigital)
+      return _fail('Add a product image');
 
-    if (isData && _selectedVariation == null) return _fail('Select a data plan');
+    if (isData && _selectedVariation == null)
+      return _fail('Select a data plan');
 
     final form = RewardForm(
       name: isData ? null : name,
@@ -208,11 +223,14 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 children: [
                   Text(_isEdit ? 'Edit Reward' : 'Add New Reward',
                       style: GoogleFonts.inter(
-                          fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary)),
                   const Spacer(),
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close_rounded, size: 20, color: AppColors.textSecondary),
+                    icon: const Icon(Icons.close_rounded,
+                        size: 20, color: AppColors.textSecondary),
                     visualDensity: VisualDensity.compact,
                   ),
                 ],
@@ -221,9 +239,12 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: _dropdown('Category', _category, _categories, (v) => setState(() => _category = v))),
+                  Expanded(
+                      child: _dropdown('Category', _category, _categories,
+                          (v) => setState(() => _category = v))),
                   const SizedBox(width: 12),
-                  Expanded(child: _dropdown('Type', _type, _types, (v) {
+                  Expanded(
+                      child: _dropdown('Type', _type, _types, (v) {
                     setState(() => _type = v);
                     if (v == 'data') _fetchDataPlans();
                   })),
@@ -244,7 +265,6 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 ),
                 const SizedBox(height: 14),
               ],
-              
               if (_type == 'data') ...[
                 _label('Data Plan'),
                 if (_fetchingPlans)
@@ -253,7 +273,8 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                     child: Center(child: CircularProgressIndicator()),
                   )
                 else if (_dataPlans.isEmpty)
-                  Text('No plans available for $_network', style: GoogleFonts.inter(color: AppColors.statusRed))
+                  Text('No plans available for $_network',
+                      style: GoogleFonts.inter(color: AppColors.statusRed))
                 else
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,12 +290,19 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                           child: DropdownButton<String>(
                             value: _selectedVariation,
                             isExpanded: true,
-                            icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textMuted),
-                            items: _dataPlans.map((p) => DropdownMenuItem(
-                              value: p.variationCode,
-                              child: Text(p.name, style: GoogleFonts.inter(fontSize: 13), overflow: TextOverflow.ellipsis),
-                            )).toList(),
-                            onChanged: (v) => setState(() => _selectedVariation = v),
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                                color: AppColors.textMuted),
+                            items: _dataPlans
+                                .map((p) => DropdownMenuItem(
+                                      value: p.variationCode,
+                                      child: Text(p.name,
+                                          style:
+                                              GoogleFonts.inter(fontSize: 13),
+                                          overflow: TextOverflow.ellipsis),
+                                    ))
+                                .toList(),
+                            onChanged: (v) =>
+                                setState(() => _selectedVariation = v),
                           ),
                         ),
                       ),
@@ -282,7 +310,8 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                         const SizedBox(height: 4),
                         Text(
                           'Provider Cost: ₦${(_dataPlans.firstWhere((p) => p.variationCode == _selectedVariation).amountKobo / 100).toStringAsFixed(2)}',
-                          style: GoogleFonts.inter(fontSize: 12, color: AppColors.textSecondary),
+                          style: GoogleFonts.inter(
+                              fontSize: 12, color: AppColors.textSecondary),
                         ),
                       ],
                     ],
@@ -290,23 +319,24 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 const SizedBox(height: 14),
               ] else ...[
                 _label('Product Name'),
-                TextField(controller: _name, decoration: fieldDecoration(hint: 'e.g. MTN 1GB Data')),
+                TextField(
+                    controller: _name,
+                    decoration: fieldDecoration(hint: 'e.g. MTN 1GB Data')),
                 const SizedBox(height: 14),
               ],
-
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(child: _numberField('Coin Cost', _coinCost)),
                   const SizedBox(width: 12),
                   if (_type == 'airtime' || _type == 'data')
-                    Expanded(child: _numberField('Discount (%)', _discountPercent))
+                    Expanded(
+                        child: _numberField('Discount (%)', _discountPercent))
                   else
                     Expanded(child: _numberField('Cash Cost (₦)', _cashCost)),
                 ],
               ),
               const SizedBox(height: 14),
-              
               if (_type != 'data') ...[
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,7 +348,6 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 ),
                 const SizedBox(height: 14),
               ],
-              
               _label('Product Image (Optional for data/airtime)'),
               _imagePicker(),
               if (_error != null) ...[
@@ -333,17 +362,21 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                     elevation: 0,
                   ),
                   child: _busy
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white))
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2.5, color: Colors.white))
                       : Text(_isEdit ? 'Save changes' : 'Add reward',
                           style: GoogleFonts.inter(
-                              fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white)),
                 ),
               ),
             ],
@@ -357,7 +390,9 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
         padding: const EdgeInsets.only(bottom: 6),
         child: Text(text,
             style: GoogleFonts.inter(
-                fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
       );
 
   Widget _numberField(String label, TextEditingController ctrl) {
@@ -397,11 +432,13 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
-              icon: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.textMuted),
+              icon: const Icon(Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.textMuted),
               items: options
                   .map((o) => DropdownMenuItem(
                         value: o.$1,
-                        child: Text(o.$2, style: GoogleFonts.inter(fontSize: 13)),
+                        child:
+                            Text(o.$2, style: GoogleFonts.inter(fontSize: 13)),
                       ))
                   .toList(),
               onChanged: (v) {
@@ -444,7 +481,9 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.inter(
-                    fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.primary),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary),
               ),
             ),
           ],
@@ -457,13 +496,17 @@ class _RewardFormDialogState extends State<RewardFormDialog> {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(color: AppColors.statusRedBg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+          color: AppColors.statusRedBg, borderRadius: BorderRadius.circular(8)),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: 18, color: AppColors.statusRed),
+          const Icon(Icons.error_outline_rounded,
+              size: 18, color: AppColors.statusRed),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(message, style: GoogleFonts.inter(fontSize: 12.5, color: AppColors.statusRed)),
+            child: Text(message,
+                style: GoogleFonts.inter(
+                    fontSize: 12.5, color: AppColors.statusRed)),
           ),
         ],
       ),
