@@ -206,10 +206,11 @@ class _GameRowState extends State<_GameRow> {
               _cell(Format.rate(g.completionRate, decimals: 1), flex: 3),
               Expanded(
                 flex: 2,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: StatusBadge(
-                      status: g.maintenance ? 'maintenance' : g.status),
+                child: Row(
+                  children: [
+                    StatusBadge(
+                        status: g.maintenance ? 'maintenance' : g.status),
+                  ],
                 ),
               ),
             ],

@@ -369,7 +369,13 @@ class _RewardRowState extends State<_RewardRow> {
             _cell(r.discountPercent > 0 ? Format.rate(r.discountPercent) : '—'),
             _cell(Format.number(r.stock)),
             _cell(Format.number(r.redeemed)),
-            Expanded(flex: 2, child: StatusBadge(status: r.status)),
+            Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    StatusBadge(status: r.status),
+                  ],
+                )),
             Expanded(
               flex: 1,
               child: PopupMenuButton<String>(

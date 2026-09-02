@@ -454,9 +454,11 @@ class _UserRowState extends State<_UserRow> {
             Expanded(flex: 1, child: _cell(Format.number(u.gamesPlayed))),
             Expanded(
                 flex: 2,
-                child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: StatusBadge(status: u.status))),
+                child: Row(
+                  children: [
+                    StatusBadge(status: u.status),
+                  ],
+                )),
             Expanded(
               flex: 1,
               child: PopupMenuButton<String>(
