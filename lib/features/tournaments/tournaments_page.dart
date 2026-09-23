@@ -10,6 +10,7 @@ import '../../shared/widgets/paginator.dart';
 import '../../theme/app_theme.dart';
 import 'create_tournament_dialog.dart';
 import 'data/tournament_models.dart';
+import 'winners_dialog.dart';
 
 class TournamentsPage extends StatefulWidget {
   const TournamentsPage({super.key});
@@ -125,6 +126,14 @@ class _TournamentsPageState extends State<TournamentsPage>
       barrierColor: Colors.black54,
       builder: (_) =>
           _PlayersDialog(tournamentId: t.id, tournamentName: t.name),
+    );
+  }
+
+  void _viewWinners(TournamentItem t) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black54,
+      builder: (_) => WinnersDialog(tournament: t),
     );
   }
 
@@ -265,17 +274,37 @@ class _TournamentsPageState extends State<TournamentsPage>
         _col('Total Players', Format.number(t.participants)),
         _col('Completion Rate', Format.rate(t.completionRate)),
       ],
-      trailing: ElevatedButton(
-        onPressed: () => _viewPlayers(t),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          elevation: 0,
-        ),
-        child: Text('View List',
-            style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          OutlinedButton(
+            onPressed: () => _viewWinners(t),
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+            child: Text('Winners',
+                style:
+                    GoogleFonts.inter(fontSize: 13, color: AppColors.primary)),
+          ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: () => _viewPlayers(t),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              elevation: 0,
+            ),
+            child: Text('View List',
+                style: GoogleFonts.inter(fontSize: 13, color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
@@ -356,7 +385,7 @@ class _TournamentsPageState extends State<TournamentsPage>
   }
 
   // ── small helpers ──────────────────────────────────────────────────────────
-  static String _participants(TournamentItem t) => t.participantLimit > 0
+  static String _participants(TournamentItem t) => t.participantLimit != null
       ? '${Format.number(t.participants)}/${Format.number(t.participantLimit)}'
       : Format.number(t.participants);
 

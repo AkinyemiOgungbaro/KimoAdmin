@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import 'prize_models.dart';
 import 'tournament_models.dart';
 
 class TournamentsRepository {
@@ -45,6 +46,28 @@ class TournamentsRepository {
         .map((e) =>
             TournamentPlayer.fromJson((e as Map).cast<String, dynamic>()))
         .toList();
+  }
+
+  Future<TournamentPrizes> prizes(String id) async {
+    final data = await _api.get('/admin/tournaments/$id/prizes');
+    return TournamentPrizes.fromJson((data as Map).cast<String, dynamic>());
+  }
+
+  /// Returns the prize's status afterwards: `sending` while airtime is processing.
+  Future<String> fulfilPrize(
+    String id,
+    int rank, {
+    required String method,
+    String? network,
+    String? note,
+  }) async {
+    final data =
+        await _api.post('/admin/tournaments/$id/prizes/$rank/fulfil', data: {
+      'method': method,
+      if (network != null) 'network': network,
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+    return (data as Map)['status']?.toString() ?? '';
   }
 
   Future<void> create(TournamentForm form) =>

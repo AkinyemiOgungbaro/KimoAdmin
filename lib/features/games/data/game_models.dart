@@ -86,6 +86,7 @@ class PuzzleImage {
   final String name;
   final String imageUrl;
   final bool isActive;
+  final bool tournamentOnly;
   final String? lastUsedAt;
   final String? createdAt;
 
@@ -94,6 +95,7 @@ class PuzzleImage {
     required this.name,
     required this.imageUrl,
     required this.isActive,
+    this.tournamentOnly = false,
     this.lastUsedAt,
     this.createdAt,
   });
@@ -103,21 +105,59 @@ class PuzzleImage {
         name: j['name'] as String? ?? '',
         imageUrl: j['image_url'] as String? ?? '',
         isActive: j['is_active'] as bool? ?? true,
+        tournamentOnly: j['tournament_only'] as bool? ?? false,
         lastUsedAt: j['last_used_at'] as String?,
         createdAt: j['created_at'] as String?,
+      );
+
+  PuzzleImage withTournamentOnly(bool value) => PuzzleImage(
+        id: id,
+        name: name,
+        imageUrl: imageUrl,
+        isActive: isActive,
+        tournamentOnly: value,
+        lastUsedAt: lastUsedAt,
+        createdAt: createdAt,
+      );
+}
+
+class TriviaCategory {
+  final String category;
+  final int questions;
+  final bool tournamentOnly;
+
+  const TriviaCategory({
+    required this.category,
+    required this.questions,
+    required this.tournamentOnly,
+  });
+
+  factory TriviaCategory.fromJson(Map<String, dynamic> j) => TriviaCategory(
+        category: j['category'] as String? ?? '',
+        questions: (j['questions'] as num?)?.toInt() ?? 0,
+        tournamentOnly: j['tournament_only'] as bool? ?? false,
       );
 }
 
 class PuzzleLibrary {
   final int total;
   final List<PuzzleImage> images;
-  const PuzzleLibrary({required this.total, required this.images});
+  final List<TriviaCategory> categories;
+  const PuzzleLibrary({
+    required this.total,
+    required this.images,
+    this.categories = const [],
+  });
 
   factory PuzzleLibrary.fromJson(Map<String, dynamic> j) => PuzzleLibrary(
         total: (j['total'] as num?)?.toInt() ?? 0,
         images: ((j['images'] as List?) ?? const [])
             .map(
                 (e) => PuzzleImage.fromJson((e as Map).cast<String, dynamic>()))
+            .toList(),
+        categories: ((j['categories'] as List?) ?? const [])
+            .map((e) =>
+                TriviaCategory.fromJson((e as Map).cast<String, dynamic>()))
             .toList(),
       );
 }

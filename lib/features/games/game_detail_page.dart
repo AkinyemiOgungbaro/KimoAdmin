@@ -14,6 +14,8 @@ import '../../shared/widgets/stat_card.dart';
 import '../../theme/app_theme.dart';
 import '../../core/web_download.dart';
 import 'data/game_models.dart';
+import 'puzzle_tile.dart';
+import 'tournament_only.dart';
 
 class GameDetailPage extends StatefulWidget {
   final String gameKey; // picture_puzzle | trivia | xoxo
@@ -360,7 +362,9 @@ class _GameDetailPageState extends State<GameDetailPage> {
         onRandomiseChanged: _toggleRandomise,
       );
     }
-    if (s.isTrivia) return const _TriviaPanel();
+    if (s.isTrivia) {
+      return _TriviaPanel(categories: _library?.categories ?? const []);
+    }
     if (s.isXoxo) {
       return _XoxoPanel(
           difficulty: _difficulty, saving: _saving, onChanged: _setDifficulty);
@@ -453,6 +457,22 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
       _toast('Image deleted');
     } catch (e) {
       _toast(e is ApiException ? e.message : 'Delete failed', error: true);
+    }
+  }
+
+  Future<void> _setTournamentOnly(PuzzleImage img, bool value) async {
+    try {
+      await gamesRepository.setPuzzleImageTournamentOnly(img.id, value);
+      setState(() {
+        _images = [
+          for (final e in _images) e.id == img.id ? e.withTournamentOnly(value) : e
+        ];
+      });
+      _toast(value
+          ? 'Picture kept for tournaments'
+          : 'Picture back in casual play');
+    } catch (e) {
+      _toast(e is ApiException ? e.message : 'Failed', error: true);
     }
   }
 
@@ -581,9 +601,11 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
                             childAspectRatio: 1,
                           ),
                           itemCount: _images.length,
-                          itemBuilder: (ctx, i) => _PuzzleTile(
+                          itemBuilder: (ctx, i) => PuzzleTile(
                             image: _images[i],
                             onDelete: () => _delete(_images[i]),
+                            onTournamentOnly: () => _setTournamentOnly(
+                                _images[i], !_images[i].tournamentOnly),
                           ),
                         ),
                 ),
@@ -596,81 +618,10 @@ class _PuzzleImagesPanelState extends State<_PuzzleImagesPanel> {
   }
 }
 
-class _PuzzleTile extends StatelessWidget {
-  final PuzzleImage image;
-  final VoidCallback onDelete;
-  const _PuzzleTile({required this.image, required this.onDelete});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.network(
-            image.imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) => Container(
-              color: AppColors.pageBg,
-              child: const Icon(Icons.broken_image_outlined,
-                  color: AppColors.textMuted),
-            ),
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return Container(
-                color: AppColors.pageBg,
-                child: const Center(
-                    child: SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2))),
-              );
-            },
-          ),
-          // Delete control — white circular button, dark icon (visible; the old
-          // code used color.withOpacity(2) which clamped to the tile colour).
-          Positioned(
-            top: 6,
-            right: 6,
-            child: Material(
-              color: Colors.white,
-              shape: const CircleBorder(),
-              elevation: 1,
-              child: InkWell(
-                customBorder: const CircleBorder(),
-                onTap: onDelete,
-                child: const Padding(
-                  padding: EdgeInsets.all(5),
-                  child: Icon(Icons.delete_outline,
-                      size: 16, color: AppColors.textSecondary),
-                ),
-              ),
-            ),
-          ),
-          if (!image.isActive)
-            Positioned(
-              left: 6,
-              bottom: 6,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text('Inactive',
-                    style: GoogleFonts.inter(fontSize: 9, color: Colors.white)),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
 // ── Trivia: CSV import + category-filtered question list with delete ────────
 class _TriviaPanel extends StatefulWidget {
-  const _TriviaPanel();
+  final List<TriviaCategory> categories;
+  const _TriviaPanel({required this.categories});
 
   @override
   State<_TriviaPanel> createState() => _TriviaPanelState();
@@ -678,22 +629,12 @@ class _TriviaPanel extends StatefulWidget {
 
 class _TriviaPanelState extends State<_TriviaPanel> {
   static const _limit = 12;
-  static const _triviaCategories = [
-    'Bible Quiz',
-    'Business',
-    'Football',
-    'General Knowledge',
-    'History',
-    'Mathematics',
-    'Music',
-    'Nigerian Affairs',
-    'Science',
-  ];
 
-  final _importCategory = TextEditingController(text: _triviaCategories.first);
-  final _filterCategory = TextEditingController(text: _triviaCategories.first);
+  late List<TriviaCategory> _categories = List.of(widget.categories);
+  late final _importCategory = TextEditingController(text: _firstCategory);
+  late final _filterCategory = TextEditingController(text: _firstCategory);
 
-  String _filter = _triviaCategories.first;
+  late String _filter = _firstCategory;
   int _page = 1;
   PlatformFile? _pickedFile;
   bool _importing = false;
@@ -730,6 +671,50 @@ class _TriviaPanelState extends State<_TriviaPanel> {
     _importCategory.dispose();
     _filterCategory.dispose();
     super.dispose();
+  }
+
+  String get _firstCategory =>
+      widget.categories.isEmpty ? '' : widget.categories.first.category;
+
+  TriviaCategory? get _filtered {
+    for (final c in _categories) {
+      if (c.category.toLowerCase() == _filter.toLowerCase()) return c;
+    }
+    return null;
+  }
+
+  List<DropdownMenuEntry<String>> get _entries => [
+        for (final c in _categories)
+          DropdownMenuEntry(
+            value: c.category,
+            label: c.category,
+            trailingIcon: c.tournamentOnly
+                ? const Icon(Icons.emoji_events,
+                    size: 16, color: AppColors.primary)
+                : null,
+          ),
+      ];
+
+  Future<void> _setTournamentOnly(TriviaCategory category, bool value) async {
+    try {
+      await gamesRepository.setCategoryTournamentOnly(category.category, value);
+      setState(() {
+        _categories = [
+          for (final c in _categories)
+            c.category == category.category
+                ? TriviaCategory(
+                    category: c.category,
+                    questions: c.questions,
+                    tournamentOnly: value)
+                : c
+        ];
+      });
+      _toast(value
+          ? 'Category kept for tournaments'
+          : 'Category back in casual play');
+    } catch (e) {
+      _toast(e is ApiException ? e.message : 'Failed', error: true);
+    }
   }
 
   void _load() {
@@ -786,6 +771,17 @@ class _TriviaPanelState extends State<_TriviaPanel> {
       setState(() {
         _pickedFile = null;
         _page = 1;
+        final known = _categories
+            .any((c) => c.category.toLowerCase() == category.toLowerCase());
+        if (!known && result.added > 0) {
+          _categories = [
+            ..._categories,
+            TriviaCategory(
+                category: category,
+                questions: result.added,
+                tournamentOnly: false)
+          ];
+        }
         _load();
       });
     } catch (e) {
@@ -915,9 +911,7 @@ class _TriviaPanelState extends State<_TriviaPanel> {
             controller: _importCategory,
             initialSelection: _importCategory.text,
             expandedInsets: EdgeInsets.zero,
-            dropdownMenuEntries: _triviaCategories
-                .map((c) => DropdownMenuEntry(value: c, label: c))
-                .toList(),
+            dropdownMenuEntries: _entries,
             textStyle: GoogleFonts.inter(fontSize: 13),
             inputDecorationTheme: _dropdownTheme(),
           ),
@@ -973,9 +967,7 @@ class _TriviaPanelState extends State<_TriviaPanel> {
                     expandedInsets: EdgeInsets.zero,
                     leadingIcon: const Icon(Icons.search,
                         size: 18, color: AppColors.textMuted),
-                    dropdownMenuEntries: _triviaCategories
-                        .map((c) => DropdownMenuEntry(value: c, label: c))
-                        .toList(),
+                    dropdownMenuEntries: _entries,
                     textStyle: GoogleFonts.inter(fontSize: 13),
                     inputDecorationTheme: _dropdownTheme(),
                     onSelected: (v) {
@@ -989,6 +981,13 @@ class _TriviaPanelState extends State<_TriviaPanel> {
               ),
               const SizedBox(width: 8),
               TextButton(onPressed: _applyFilter, child: const Text('Apply')),
+              if (_filtered != null) ...[
+                const SizedBox(width: 8),
+                TournamentOnlyToggle(
+                  value: _filtered!.tournamentOnly,
+                  onChanged: (v) => _setTournamentOnly(_filtered!, v),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: 12),
