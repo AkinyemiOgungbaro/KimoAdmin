@@ -6,6 +6,8 @@ import '../../core/format.dart';
 import '../../shared/widgets/form_fields.dart';
 import '../../theme/app_theme.dart';
 import 'data/tournament_models.dart';
+import 'prize_bands_editor.dart';
+import 'tournament_content_section.dart';
 
 /// Create/edit dialog for a tournament. Pass [existing] to edit; omit to create.
 /// Returns `true` when a tournament was created or updated.
@@ -26,6 +28,12 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
   final _attempts = TextEditingController(text: '1');
   final _code = TextEditingController();
 
+  late final _content = TournamentContentDraft.from(widget.existing);
+  late final _prizes = [
+    for (final band in widget.existing?.prizes ?? const <PrizeBand>[])
+      PrizeBandDraft.from(band)
+  ];
+
   DateTime? _startsAt;
   bool _busy = false;
   bool _generatingCode = false;
@@ -41,7 +49,7 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
       _name.text = e.name;
       _startsAt = DateTime.tryParse(e.startsAt ?? '')?.toLocal();
       _duration.text = e.durationMinutes.toString();
-      _limit.text = e.participantLimit.toString();
+      _limit.text = e.participantLimit?.toString() ?? '';
       _pool.text = (e.prizePoolKobo / 100).toStringAsFixed(0);
       _entryFee.text = e.entryFeeCoins.toString();
       _attempts.text =
@@ -62,6 +70,9 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
       _code
     ]) {
       c.dispose();
+    }
+    for (final band in _prizes) {
+      band.dispose();
     }
     super.dispose();
   }
@@ -110,8 +121,8 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
       return _fail('Enter a valid duration (minutes)');
 
     final limitText = _limit.text.trim();
-    final limit = limitText.isEmpty ? 0 : int.tryParse(limitText);
-    if (limit == null || limit < 0)
+    final limit = limitText.isEmpty ? null : int.tryParse(limitText);
+    if (limitText.isNotEmpty && (limit == null || limit < 1))
       return _fail('Enter a valid participant limit');
 
     final poolNaira = num.tryParse(_pool.text.trim());
@@ -128,6 +139,12 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
 
     final code = _code.text.trim();
 
+    final contentProblem = _content.problem;
+    if (contentProblem != null) return _fail(contentProblem);
+
+    final prizes = buildPrizeBands(_prizes);
+    if (prizes.error != null) return _fail(prizes.error!);
+
     final form = TournamentForm(
       name: name,
       startsAt: _startsAt!.toUtc().toIso8601String(),
@@ -137,6 +154,11 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
       attemptsPerGame: attempts,
       participantLimit: limit,
       entryCode: code,
+      games: _content.games.toList(),
+      triviaCategories: _content.chosenCategories,
+      puzzleImageIds: _content.chosenImageIds,
+      timeBoosterEnabled: _content.chosenTimeBooster,
+      prizes: prizes.bands,
     );
 
     setState(() => _busy = true);
@@ -163,7 +185,7 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 560),
+        constraints: const BoxConstraints(maxWidth: 680),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(32),
           child: Column(
@@ -220,7 +242,9 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                   Expanded(
                       child: _numberField('Duration (minutes)', _duration)),
                   const SizedBox(width: 12),
-                  Expanded(child: _numberField('Participant Limit', _limit)),
+                  Expanded(
+                      child: _numberField('Participant Limit', _limit,
+                          hint: 'Unlimited')),
                 ],
               ),
               const SizedBox(height: 14),
@@ -241,6 +265,12 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                   Expanded(child: _codeField()),
                 ],
               ),
+              const Divider(height: 32),
+              TournamentContentSection(
+                  draft: _content, onChanged: () => setState(() {})),
+              const Divider(height: 32),
+              PrizeBandsEditor(
+                  bands: _prizes, onChanged: () => setState(() {})),
               if (_error != null) ...[
                 const SizedBox(height: 16),
                 _errorBanner(_error!),
@@ -286,7 +316,8 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
                 color: AppColors.textPrimary)),
       );
 
-  Widget _numberField(String label, TextEditingController ctrl) {
+  Widget _numberField(String label, TextEditingController ctrl,
+      {String? hint}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -294,7 +325,7 @@ class _TournamentFormDialogState extends State<TournamentFormDialog> {
         TextField(
           controller: ctrl,
           keyboardType: TextInputType.number,
-          decoration: fieldDecoration(),
+          decoration: fieldDecoration(hint: hint),
           style: GoogleFonts.inter(fontSize: 13),
         ),
       ],

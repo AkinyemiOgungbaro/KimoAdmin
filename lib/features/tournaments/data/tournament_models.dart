@@ -14,9 +14,14 @@ class TournamentItem {
   final num prizePoolKobo;
   final num attemptsPerGame;
   final num participants;
-  final num participantLimit;
+  final num? participantLimit;
   final String? entryCode;
   final String? bannerUrl;
+  final List<String> games;
+  final List<String> triviaCategories;
+  final List<String> puzzleImageIds;
+  final bool timeBoosterEnabled;
+  final List<PrizeBand> prizes;
   final num completionRate;
   final num secondsRemaining;
 
@@ -32,9 +37,14 @@ class TournamentItem {
     required this.prizePoolKobo,
     required this.attemptsPerGame,
     required this.participants,
-    required this.participantLimit,
+    this.participantLimit,
     this.entryCode,
     this.bannerUrl,
+    this.games = const [],
+    this.triviaCategories = const [],
+    this.puzzleImageIds = const [],
+    this.timeBoosterEnabled = false,
+    this.prizes = const [],
     required this.completionRate,
     required this.secondsRemaining,
   });
@@ -51,12 +61,56 @@ class TournamentItem {
         prizePoolKobo: (j['prize_pool_kobo'] as num?) ?? 0,
         attemptsPerGame: (j['attempts_per_game'] as num?) ?? 0,
         participants: (j['participants'] as num?) ?? 0,
-        participantLimit: (j['participant_limit'] as num?) ?? 0,
+        participantLimit: j['participant_limit'] as num?,
         entryCode: j['entry_code'] as String?,
         bannerUrl: j['banner_url'] as String?,
+        games: _strings(j['games']),
+        triviaCategories: _strings(j['trivia_categories']),
+        puzzleImageIds: _strings(j['puzzle_image_ids']),
+        timeBoosterEnabled: j['time_booster_enabled'] as bool? ?? false,
+        prizes: ((j['prizes'] as List?) ?? const [])
+            .map((e) => PrizeBand.fromJson((e as Map).cast<String, dynamic>()))
+            .toList(),
         completionRate: (j['completion_rate'] as num?) ?? 0,
         secondsRemaining: (j['seconds_remaining'] as num?) ?? 0,
       );
+}
+
+List<String> _strings(dynamic value) =>
+    ((value as List?) ?? const []).map((e) => e.toString()).toList();
+
+/// A run of ranks sharing one prize: `cash`, `airtime` or `item`.
+class PrizeBand {
+  final int fromRank;
+  final int toRank;
+  final String type;
+  final num amountKobo;
+  final String? itemName;
+
+  const PrizeBand({
+    required this.fromRank,
+    required this.toRank,
+    required this.type,
+    this.amountKobo = 0,
+    this.itemName,
+  });
+
+  int get winners => toRank - fromRank + 1;
+
+  factory PrizeBand.fromJson(Map<String, dynamic> j) => PrizeBand(
+        fromRank: (j['from_rank'] as num?)?.toInt() ?? 1,
+        toRank: (j['to_rank'] as num?)?.toInt() ?? 1,
+        type: j['type'] as String? ?? 'cash',
+        amountKobo: (j['amount_kobo'] as num?) ?? 0,
+        itemName: j['item_name'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'from_rank': fromRank,
+        'to_rank': toRank,
+        'type': type,
+        if (type == 'item') 'item_name': itemName else 'amount_kobo': amountKobo,
+      };
 }
 
 class TournamentsPageData {
@@ -181,7 +235,7 @@ class TournamentPlayer {
   }
 }
 
-/// Payload for `POST /admin/tournaments` and (subset of) `PATCH`.
+/// Payload for `POST /admin/tournaments` and `PATCH`.
 class TournamentForm {
   final String name;
   final String startsAt; // ISO-8601
@@ -189,8 +243,13 @@ class TournamentForm {
   final num entryFeeCoins;
   final num prizePoolKobo;
   final num attemptsPerGame;
-  final num participantLimit;
+  final num? participantLimit;
   final String? entryCode;
+  final List<String> games;
+  final List<String> triviaCategories;
+  final List<String> puzzleImageIds;
+  final bool timeBoosterEnabled;
+  final List<PrizeBand> prizes;
 
   const TournamentForm({
     required this.name,
@@ -199,8 +258,13 @@ class TournamentForm {
     required this.entryFeeCoins,
     required this.prizePoolKobo,
     required this.attemptsPerGame,
-    required this.participantLimit,
+    this.participantLimit,
     this.entryCode,
+    required this.games,
+    required this.triviaCategories,
+    required this.puzzleImageIds,
+    required this.timeBoosterEnabled,
+    required this.prizes,
   });
 
   Map<String, dynamic> toJson() => {
@@ -212,5 +276,10 @@ class TournamentForm {
         'attempts_per_game': attemptsPerGame,
         'participant_limit': participantLimit,
         if (entryCode != null && entryCode!.isNotEmpty) 'entry_code': entryCode,
+        'games': games,
+        'trivia_categories': triviaCategories,
+        'puzzle_image_ids': puzzleImageIds,
+        'time_booster_enabled': timeBoosterEnabled,
+        'prizes': prizes.map((band) => band.toJson()).toList(),
       };
 }

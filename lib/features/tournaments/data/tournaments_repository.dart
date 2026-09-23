@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import 'prize_models.dart';
 import 'tournament_models.dart';
 
 class TournamentsRepository {
@@ -45,6 +46,11 @@ class TournamentsRepository {
         .map((e) =>
             TournamentPlayer.fromJson((e as Map).cast<String, dynamic>()))
         .toList();
+  }
+
+  Future<TournamentPrizes> prizes(String id) async {
+    final data = await _api.get('/admin/tournaments/$id/prizes');
+    return TournamentPrizes.fromJson((data as Map).cast<String, dynamic>());
   }
 
   Future<void> create(TournamentForm form) =>
