@@ -44,7 +44,17 @@ class GamesRepository {
   Future<void> deletePuzzleImage(String id) =>
       _api.delete('/admin/games/picture_puzzle/images/$id');
 
+  Future<void> setPuzzleImageTournamentOnly(String id, bool tournamentOnly) =>
+      _api.patch('/admin/games/picture_puzzle/images/$id',
+          data: {'tournament_only': tournamentOnly});
+
   // ---- trivia questions ----------------------------------------------------
+
+  Future<void> setCategoryTournamentOnly(
+          String category, bool tournamentOnly) =>
+      _api.patch(
+          '/admin/games/trivia/categories/${Uri.encodeComponent(category)}',
+          data: {'tournament_only': tournamentOnly});
 
   Future<TriviaPageData> listTrivia(
       {String? category, int page = 1, int limit = 20}) async {
