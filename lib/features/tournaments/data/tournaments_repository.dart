@@ -53,6 +53,23 @@ class TournamentsRepository {
     return TournamentPrizes.fromJson((data as Map).cast<String, dynamic>());
   }
 
+  /// Returns the prize's status afterwards: `sending` while airtime is processing.
+  Future<String> fulfilPrize(
+    String id,
+    int rank, {
+    required String method,
+    String? network,
+    String? note,
+  }) async {
+    final data =
+        await _api.post('/admin/tournaments/$id/prizes/$rank/fulfil', data: {
+      'method': method,
+      if (network != null) 'network': network,
+      if (note != null && note.isNotEmpty) 'note': note,
+    });
+    return (data as Map)['status']?.toString() ?? '';
+  }
+
   Future<void> create(TournamentForm form) =>
       _api.post('/admin/tournaments', data: form.toJson());
 

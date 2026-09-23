@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/api/api_exception.dart';
 import '../../core/di.dart';
 import '../../core/format.dart';
 import '../../shared/widgets/async_view.dart';
+import '../../shared/widgets/form_fields.dart';
 import '../../theme/app_theme.dart';
 import 'data/prize_models.dart';
 import 'data/tournament_models.dart';
+import 'fulfil_prize_dialog.dart';
 
 String prizeLabel(String type, num amount, String? itemName) {
   switch (type) {
@@ -30,7 +33,9 @@ class WinnersDialog extends StatefulWidget {
 
 class _WinnersDialogState extends State<WinnersDialog> {
   late Future<TournamentPrizes> _future;
+  final _search = TextEditingController();
   bool _toBeGivenOnly = false;
+  int? _working;
 
   @override
   void initState() {
@@ -38,7 +43,81 @@ class _WinnersDialogState extends State<WinnersDialog> {
     _load();
   }
 
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
   void _load() => _future = tournamentsRepository.prizes(widget.tournament.id);
+
+  void _toast(String message, {bool error = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: error ? AppColors.statusRed : null,
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
+  Future<void> _fulfil(TournamentPrize prize, String method) async {
+    final winner = prize.winnerUsername ?? 'the winner';
+    final what = prizeLabel(prize.prizeType, prize.amount, prize.itemName);
+    final checkCode = prize.claimCode == null
+        ? ''
+        : ' Check their claim code ${prize.claimCode} first.';
+
+    ({String? network, String note})? answer = (network: null, note: '');
+    if (prize.status != 'sending') {
+      answer = await showFulfilPrizeDialog(
+        context,
+        title: switch (method) {
+          'wallet_credit' => 'Credit wallet',
+          'airtime' => 'Send airtime',
+          _ => 'Mark as given',
+        },
+        message: switch (method) {
+          'wallet_credit' => "Credit $what to $winner's wallet?",
+          'airtime' => 'Send $what to $winner on ${prize.winnerPhone ?? '-'}?',
+          'item_handed_over' =>
+            'Confirm $what was handed to $winner.$checkCode',
+          _ => 'Confirm $what was paid to $winner at the event.$checkCode',
+        },
+        confirmLabel: switch (method) {
+          'wallet_credit' => 'Credit wallet',
+          'airtime' => 'Send airtime',
+          _ => 'Mark given',
+        },
+        askNetwork: method == 'airtime',
+      );
+    }
+    if (answer == null) return;
+
+    setState(() => _working = prize.rank);
+    try {
+      final status = await tournamentsRepository.fulfilPrize(
+        widget.tournament.id,
+        prize.rank,
+        method: method,
+        network: answer.network,
+        note: answer.note,
+      );
+      _toast(status == 'sending'
+          ? 'The airtime is still processing. Check again in a minute'
+          : 'Prize marked as given');
+    } on ApiException catch (e) {
+      _toast(e.message, error: true);
+    } catch (_) {
+      _toast('Failed', error: true);
+    } finally {
+      if (mounted) {
+        setState(() {
+          _working = null;
+          _load();
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +163,19 @@ class _WinnersDialogState extends State<WinnersDialog> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _search,
+                onChanged: (_) => setState(() {}),
+                decoration:
+                    fieldDecoration(hint: 'Search by claim code or username')
+                        .copyWith(
+                  prefixIcon: const Icon(Icons.search,
+                      size: 18, color: AppColors.textMuted),
+                ),
+                style: GoogleFonts.inter(fontSize: 13),
+              ),
+              const SizedBox(height: 12),
               Flexible(
                 child: AsyncView<TournamentPrizes>(
                   future: _future,
@@ -108,9 +199,14 @@ class _WinnersDialogState extends State<WinnersDialog> {
           'ends. Check back shortly.');
     }
 
-    final rows = _toBeGivenOnly
-        ? data.items.where((p) => p.status == 'awaiting_fulfilment').toList()
-        : data.items;
+    final query = _search.text.trim().toLowerCase();
+    final rows = data.items
+        .where((p) => !_toBeGivenOnly || p.toBeGiven)
+        .where((p) =>
+            query.isEmpty ||
+            (p.claimCode ?? '').toLowerCase().contains(query) ||
+            (p.winnerUsername ?? '').toLowerCase().contains(query))
+        .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -124,12 +220,18 @@ class _WinnersDialogState extends State<WinnersDialog> {
         const SizedBox(height: 8),
         Flexible(
           child: rows.isEmpty
-              ? _note('Every prize has been given.')
+              ? _note(query.isEmpty
+                  ? 'Every prize has been given.'
+                  : 'No winner matches that search.')
               : ListView.separated(
                   shrinkWrap: true,
                   itemCount: rows.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
-                  itemBuilder: (_, i) => _WinnerRow(prize: rows[i]),
+                  itemBuilder: (_, i) => _WinnerRow(
+                    prize: rows[i],
+                    busy: _working == rows[i].rank,
+                    onFulfil: (method) => _fulfil(rows[i], method),
+                  ),
                 ),
         ),
       ],
@@ -147,9 +249,41 @@ class _WinnersDialogState extends State<WinnersDialog> {
       );
 }
 
+const _methodLabels = {
+  'cash_at_event': 'cash at event',
+  'wallet_credit': 'wallet credit',
+  'airtime': 'airtime',
+  'item_handed_over': 'handed over',
+};
+
 class _WinnerRow extends StatelessWidget {
   final TournamentPrize prize;
-  const _WinnerRow({required this.prize});
+  final bool busy;
+  final ValueChanged<String> onFulfil;
+  const _WinnerRow(
+      {required this.prize, required this.busy, required this.onFulfil});
+
+  List<({String method, String label})> get _actions {
+    if (!prize.toBeGiven) return const [];
+    switch (prize.prizeType) {
+      case 'cash':
+        return const [
+          (method: 'cash_at_event', label: 'Mark given'),
+          (method: 'wallet_credit', label: 'Credit wallet'),
+        ];
+      case 'airtime':
+        return [
+          (
+            method: 'airtime',
+            label: prize.status == 'sending' ? 'Check airtime' : 'Send airtime'
+          ),
+        ];
+      case 'item':
+        return const [(method: 'item_handed_over', label: 'Mark given')];
+      default:
+        return const [];
+    }
+  }
 
   static String _flag(String flag) {
     final words = flag.replaceAll('_', ' ');
@@ -169,6 +303,13 @@ class _WinnerRow extends StatelessWidget {
         label: 'To be given',
         color: AppColors.statusOrange,
         background: AppColors.statusOrangeBg
+      );
+    }
+    if (prize.status == 'sending') {
+      return (
+        label: 'Sending',
+        color: AppColors.statusBlue,
+        background: AppColors.statusBlueBg
       );
     }
     return (
@@ -217,6 +358,23 @@ class _WinnerRow extends StatelessWidget {
                   Text(contact,
                       style: GoogleFonts.inter(
                           fontSize: 11.5, color: AppColors.textMuted)),
+                if (prize.claimCode != null)
+                  Text('Claim code ${prize.claimCode}',
+                      style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary)),
+                if (prize.fulfilmentMethod != null && !prize.toBeGiven)
+                  Text(
+                      'Given as ${_methodLabels[prize.fulfilmentMethod] ?? prize.fulfilmentMethod}'
+                      '${prize.fulfilledByName != null ? ' by ${prize.fulfilledByName}' : ''}'
+                      '${prize.fulfilledAt != null ? ', ${Format.dateTime(prize.fulfilledAt)}' : ''}',
+                      style: GoogleFonts.inter(
+                          fontSize: 11.5, color: AppColors.textSecondary)),
+                if (prize.fulfilmentNote != null)
+                  Text(prize.fulfilmentNote!,
+                      style: GoogleFonts.inter(
+                          fontSize: 11.5, color: AppColors.textSecondary)),
                 for (final flag in prize.flags)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
@@ -231,6 +389,34 @@ class _WinnerRow extends StatelessWidget {
                                 fontSize: 11.5, color: AppColors.statusRed)),
                       ],
                     ),
+                  ),
+                if (_actions.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: busy
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2))
+                        : Wrap(
+                            spacing: 8,
+                            children: [
+                              for (final action in _actions)
+                                OutlinedButton(
+                                  onPressed: () => onFulfil(action.method),
+                                  style: OutlinedButton.styleFrom(
+                                    visualDensity: VisualDensity.compact,
+                                    side: BorderSide(
+                                        color: AppColors.primary
+                                            .withValues(alpha: 0.4)),
+                                  ),
+                                  child: Text(action.label,
+                                      style: GoogleFonts.inter(
+                                          fontSize: 12,
+                                          color: AppColors.primary)),
+                                ),
+                            ],
+                          ),
                   ),
               ],
             ),
